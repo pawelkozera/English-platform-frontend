@@ -1,10 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect  } from 'react'
+import apiClient from './interceptor/axios-interceptor'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await apiClient.get('/');
+        console.log(response.data);
+      } catch (error) {
+        console.error('Error fetching data', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <>
