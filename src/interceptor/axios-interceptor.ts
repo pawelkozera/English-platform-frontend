@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 
 let accessToken = localStorage.getItem("accessToken");
-let refreshToken = ""; // Replace with actual token retrieval logic
+let refreshToken = localStorage.getItem("refreshToken"); 
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: 'http://localhost:8080',
@@ -42,11 +42,15 @@ apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if ((error.response.status === 401) && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const response = await apiClient.post('/refresh-token', { refreshToken });
         accessToken = response.data.accessToken;
+        if (accessToken) {
+          localStorage.setItem("accessToken", accessToken);
+        }
+
         axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
         
         return apiClient(originalRequest);
