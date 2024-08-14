@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import apiClient from './interceptor/axios-interceptor';
 import './App.css';
+import { Button } from "@/components/ui/button"
 
 function App() {
   const [email, setEmail] = useState('');
@@ -66,10 +67,11 @@ function App() {
 
   return (
     <div className="App">
+      <Button>Click me</Button>
       <h1>Signup and Signin Test</h1>
 
       <div className="form">
-        <h2>Signup</h2>
+        <h2 className="text-3xl font-bold underline">Signup</h2>
         <input
           type="text"
           placeholder="First Name"
