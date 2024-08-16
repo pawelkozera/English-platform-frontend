@@ -4,6 +4,7 @@ import './App.css';
 import { Button } from "@/components/ui/button";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ModeToggle } from "@/components/theme/mode-toggle";
+import { MainPage } from './components/pages/loggedUser/main';
 
 function App() {
   const [email, setEmail] = useState('');
@@ -70,71 +71,7 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <div className="App">
-        <Button>Click me</Button>
-        <h1>Signup and Signin Test</h1>
-
-        <div className="form">
-          <h2 className="text-3xl font-bold underline">Signup</h2>
-          <input
-            type="text"
-            placeholder="First Name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Last Name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button onClick={handleSignup}>Signup</button>
-        </div>
-
-        <div className="form">
-          <h2>Signin</h2>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button onClick={handleSignin}>Signin</button>
-        </div>
-
-        <button onClick={handleHelloEndPoint}>HelloEndPoint</button>
-
-        {accessToken && (
-          <div>
-            <h3>Access Token</h3>
-            <p>{accessToken}</p>
-          </div>
-        )}
-
-        {refreshToken && (
-          <div>
-            <h3>Refresh Token</h3>
-            <p>{refreshToken}</p>
-          </div>
-        )}
-        <ModeToggle></ModeToggle>
+        <MainPage></MainPage>
       </div>
     </ThemeProvider>
   );
