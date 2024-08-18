@@ -4,7 +4,7 @@ import './App.css';
 import { Button } from "@/components/ui/button";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ModeToggle } from "@/components/theme/mode-toggle";
-import { MainPage } from './components/pages/loggedUser/main';
+import { MainPage } from './components/pages/unLoggedUser/main';
 
 function App() {
   const [email, setEmail] = useState('');

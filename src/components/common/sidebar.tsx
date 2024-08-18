@@ -6,7 +6,7 @@ export function Sidebar() {
   return (
     <aside className="w-64 shadow-md">
         <div className="p-4">
-            <h1 className="flex text-2xl font-bold">EnglishMaster</h1>
+            <h1 className="flex text-2xl font-bold">LearnJoy</h1>
             <nav className="mt-6">
             <div className="flex py-8">
                 <ModeToggle></ModeToggle>
