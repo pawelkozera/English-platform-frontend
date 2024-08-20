@@ -28,10 +28,10 @@ export function Sidebar() {
                 Profile
             </div>
             <div className="py-12">
-                <div className="flex items-center px-4 py-4 hover:bg-secondary">
-                <LogOut className="w-5 h-5 mr-3" />
-                Logout
-                </div>
+                <Link to={"/"} className="flex items-center px-4 py-4 hover:bg-secondary">
+                    <LogOut className="w-5 h-5 mr-3" />
+                    Logout
+                </Link>
             </div>
             </nav>
         </div>

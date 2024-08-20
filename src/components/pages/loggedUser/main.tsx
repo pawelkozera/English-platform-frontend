@@ -2,11 +2,14 @@ import { Sidebar } from "@/components/common/sidebar";
 import { Content } from "./content";
 import { Footer } from "@/components/common/footer";
 
-export function MainPage() {
+export function MainPageLogged() {
   return (
-    <div className="flex h-screen">
-      <Sidebar />
-      <Content />
+    <div className="h-screen">
+      <main className="flex">
+        <Sidebar />
+        <Content />
+      </main>
+      
       <Footer />
     </div>
   )

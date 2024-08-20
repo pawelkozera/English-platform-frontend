@@ -3,7 +3,7 @@ import { Header } from './components/header';
 import { InformationCards } from './components/informationCards';
 import { LoginOrRegister } from './components/loginOrRegister';
 
-export function MainPage() {
+export function MainPageUnLogged() {
   return (
     <div className="flex flex-col h-screen">
       <main className="flex-grow container mx-auto py-8">

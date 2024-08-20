@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import apiClient from "@/interceptor/axios-interceptor";
+import { useNavigate, useParams, Link } from "react-router-dom";
 
 export function LoginOrRegister() {
   const [email, setEmail] = useState('');
@@ -13,6 +14,8 @@ export function LoginOrRegister() {
   const [lastName, setLastName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('student');
+
+  const navigate = useNavigate();
   
   const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken') || '');
   const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || '');
@@ -41,6 +44,7 @@ export function LoginOrRegister() {
       localStorage.setItem('refreshToken', refreshToken);
 
       console.log('Signup successful', response.data);
+      navigate(`/home`);
     } catch (error) {
       console.error('Error during signup', error);
     }
@@ -62,6 +66,7 @@ export function LoginOrRegister() {
       localStorage.setItem('refreshToken', refreshToken);
 
       console.log('Signin successful', response.data);
+      navigate(`/home`);
     } catch (error) {
       console.error('Error during signin', error);
     }
