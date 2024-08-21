@@ -1,7 +1,7 @@
 import { Footer } from '@/components/common/footer';
 import { Header } from './components/header';
 import { InformationCards } from './components/informationCards';
-import { LoginOrRegister } from './components/loginOrRegister';
+import { LoginOrRegisterCard } from './components/loginOrRegisterCard';
 
 export function MainPageUnLogged() {
   return (
@@ -9,7 +9,7 @@ export function MainPageUnLogged() {
       <main className="flex-grow container mx-auto py-8">
         <Header />
         <InformationCards />
-        <LoginOrRegister />
+        <LoginOrRegisterCard />
       </main>
       
       <Footer />
