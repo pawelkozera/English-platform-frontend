@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { MainPageUnLogged } from './components/pages/unLoggedUser/main.tsx';
 import { MainPageLogged } from './components/pages/loggedUser/main.tsx';
+import { Repetitions } from './components/pages/loggedUser/student/repetitions/repetitions.tsx';
 import './index.css'
 
 const router = createBrowserRouter([
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
   {
     path: "/home",
     element: <MainPageLogged />
+  },
+  {
+    path: "/repetitions",
+    element: <Repetitions />
   },
 ]);
 

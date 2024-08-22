@@ -1,13 +1,13 @@
 import { Sidebar } from "@/components/common/sidebar";
-import { Content } from "./content";
 import { Footer } from "@/components/common/footer";
+import { WordRepetitionTrainer } from "./wordRepetitionTrainer";
 
-export function MainPageLogged() {
+export function Repetitions() {
   return (
     <div className="h-screen">
       <main className="flex flex-col lg:flex-row">
         <Sidebar />
-        <Content />
+        <WordRepetitionTrainer />
       </main>
       
       <Footer />
