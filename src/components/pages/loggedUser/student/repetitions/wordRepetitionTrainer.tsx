@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const words = [
-  { id: 1, word: "Bonjour", translation: "Hello", image: "/placeholder.svg?height=100&width=100" },
+  { id: 1, word: "Bonjour", translation: "Hello", image: "https://porysunki.com/environment/cache/images/500_500_productGfx_1344/bonjour.jpg" },
   { id: 2, word: "Merci", translation: "Thank you", image: null },
   { id: 3, word: "Au revoir", translation: "Goodbye", image: "/placeholder.svg?height=100&width=100" },
 ]
@@ -54,11 +54,12 @@ export function WordRepetitionTrainer() {
 
   return (
     <div className="w-2/3 mx-auto mt-10 p-6 bg-secondary rounded-lg shadow-lg">
+      <p className="mb-2"> {currentWordIndex + 1} / {words.length}</p>
       <Progress value={progress} className="mb-6" />
       <Card className="p-6 mb-6">
         <h2 className="text-2xl font-bold mb-4">{currentWord.word}</h2>
         {currentWord.image && (
-          <img src={currentWord.image} alt={currentWord.word} className="w-full h-32 object-cover mb-4 rounded" />
+          <img src={currentWord.image} alt={currentWord.word} className="w-fit h-fit mx-auto object-cover mb-4 rounded" />
         )}
       </Card>
       <Card className="p-6 mb-6">
@@ -77,14 +78,14 @@ export function WordRepetitionTrainer() {
         )}
         {!showRatingButtons ? (
           <div className="flex justify-center">
-            <Button onClick={showHint} className="w-1/3 m-4">Hint</Button>
-            <Button onClick={checkAnswer} className="w-1/3 m-4">Check</Button>
+            <Button onClick={showHint} variant="orange" className="w-1/3 m-4">Hint</Button>
+            <Button onClick={checkAnswer} variant="green" className="w-1/3 m-4">Check</Button>
           </div>
         ) : (
           <div className="flex justify-between">
             <Button onClick={() => handleRating("Poor")} variant="destructive" className="w-1/3 m-4">Poor</Button>
-            <Button onClick={() => handleRating("So-so")} variant="secondary" className="w-1/3 m-4">So-so</Button>
-            <Button onClick={() => handleRating("Great")} variant="default" className="w-1/3 m-4">Great</Button>
+            <Button onClick={() => handleRating("So-so")} variant="orange" className="w-1/3 m-4">So-so</Button>
+            <Button onClick={() => handleRating("Great")} variant="green" className="w-1/3 m-4">Great</Button>
           </div>
         )}
       </Card>
