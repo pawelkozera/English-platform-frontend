@@ -25,7 +25,22 @@ export function WordRepetitionTrainer() {
   }
 
   const showHint = () => {
-    setUserAnswer(currentWord.translation[0])
+    if (userAnswer.length === 0) {
+      setUserAnswer(currentWord.translation[0])
+      return
+    }
+    else if (userAnswer === currentWord.translation) {
+      return
+    }
+
+    for (let i = 0; i < userAnswer.length; i++) {
+      if (userAnswer[i] !== currentWord.translation[i]) {
+        setUserAnswer(currentWord.translation.slice(0, i+1))
+        return
+      }
+    }
+
+    setUserAnswer(userAnswer + currentWord.translation.slice(userAnswer.length, userAnswer.length + 1));
   }
 
   const handleRating = (rating: string) => {
@@ -46,7 +61,7 @@ export function WordRepetitionTrainer() {
 
   const highlightMistakes = (correct: string, attempt: string) => {
     return correct.split('').map((char, index) => (
-      <span key={index} className={char.toLowerCase() !== attempt[index]?.toLowerCase() ? "text-red-500 font-bold" : ""}>
+      <span key={index} className={char.toLowerCase() !== attempt[index]?.toLowerCase() ? "text-red-500 font-bold" : "text-green-500 font-bold"}>
         {char}
       </span>
     ))
