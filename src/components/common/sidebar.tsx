@@ -8,7 +8,7 @@ export function Sidebar() {
         <div className="p-4">
             <h1 className="flex text-2xl font-bold">
                 <Link to={"/home"}>
-                    LearnJoy
+                    LearnJoy &#128039;
                 </Link>
             </h1>
             <nav className="mt-6">
