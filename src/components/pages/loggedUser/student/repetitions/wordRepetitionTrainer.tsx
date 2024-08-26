@@ -18,7 +18,7 @@ export function WordRepetitionTrainer() {
 
   const [currentWord, setCurrentWord] = useState(words[0])
   const [wordsLength] = useState(words.length)
-  const progress = ((correctAnswerCounter + 1) / wordsLength) * 100
+  const progress = ((correctAnswerCounter) / wordsLength) * 100
 
   const checkAnswer = () => {
     setShowAnswer(true)
@@ -74,10 +74,10 @@ export function WordRepetitionTrainer() {
 
   return (
     <div className="w-2/3 mx-auto mt-10 p-6 bg-secondary rounded-lg shadow-lg">
+      <p className="mb-2"> {correctAnswerCounter} / {wordsLength}</p>
+      <Progress value={progress} className="mb-6" />
       {(words.length > 0 && currentWord) ? (
         <>
-          <p className="mb-2"> {correctAnswerCounter + 1} / {wordsLength}</p>
-          <Progress value={progress} className="mb-6" />
           <Card className="p-6 mb-6">
             <h2 className="text-2xl font-bold mb-4">{currentWord.word}</h2>
             {currentWord.image && (
