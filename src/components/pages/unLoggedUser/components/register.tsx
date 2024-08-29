@@ -1,12 +1,9 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import apiClient from "@/interceptor/axios-interceptor";
 import { useNavigate } from "react-router-dom";
-import { Login } from "./login";
 
 export function Register() {
   const [email, setEmail] = useState('');
@@ -17,9 +14,6 @@ export function Register() {
   const [role, setRole] = useState('student');
 
   const navigate = useNavigate();
-  
-  const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken') || '');
-  const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || '');
 
   const handleSignup = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -36,13 +30,6 @@ export function Register() {
         lastName,
         role,
       });
-      const { accessToken, refreshToken } = response.data;
-      
-      setAccessToken(accessToken);
-      setRefreshToken(refreshToken);
-
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
 
       console.log('Signup successful', response.data);
       navigate(`/home`);
@@ -50,7 +37,7 @@ export function Register() {
       console.error('Error during signup', error);
     }
   };
-  
+
   return (
     <form onSubmit={handleSignup}>
       <div className="space-y-4">

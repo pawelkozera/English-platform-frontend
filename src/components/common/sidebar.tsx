@@ -1,8 +1,21 @@
 import { BookOpen, RepeatIcon, Gamepad2, UserCircle, LogOut } from "lucide-react"
 import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/theme/mode-toggle";
+import { useNavigate } from "react-router-dom";
+import apiClient from "@/interceptor/axios-interceptor";
 
 export function Sidebar() {
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+          await apiClient.post('/api/v1/auth/logout');
+          navigate('/');
+        } catch (error) {
+          console.error('Logout failed', error);
+        }
+      };
+
   return (
     <aside className="w-64 shadow-md">
         <div className="p-4">
@@ -32,10 +45,10 @@ export function Sidebar() {
                 Profile
             </div>
             <div className="py-12">
-                <Link to={"/"} className="flex items-center px-4 py-4 hover:bg-secondary">
+                <button onClick={handleLogout} className="flex items-center px-4 py-4 hover:bg-secondary">
                     <LogOut className="w-5 h-5 mr-3" />
                     Logout
-                </Link>
+                </button>
             </div>
             </nav>
         </div>

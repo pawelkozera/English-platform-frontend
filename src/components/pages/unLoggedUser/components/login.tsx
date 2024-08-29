@@ -10,9 +10,6 @@ export function Login() {
   const [password, setPassword] = useState('');
 
   const navigate = useNavigate();
-  
-  const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken') || '');
-  const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || '');
 
   const handleSignin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -21,13 +18,6 @@ export function Login() {
         email,
         password,
       });
-      const { accessToken, refreshToken } = response.data;
-
-      setAccessToken(accessToken);
-      setRefreshToken(refreshToken);
-
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
 
       console.log('Signin successful', response.data);
       navigate(`/home`);
