@@ -1,4 +1,4 @@
-import { BookOpen, RepeatIcon, Gamepad2, UserCircle, LogOut } from "lucide-react"
+import { BookOpen, RepeatIcon, Gamepad2, UserCircle, Users , LogOut } from "lucide-react"
 import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { useNavigate } from "react-router-dom";
@@ -28,22 +28,26 @@ export function Sidebar() {
             <div className="flex py-8">
                 <ModeToggle></ModeToggle>
             </div>
-            <div className="flex items-center px-4 py-4 hover:bg-secondary">
+            <Link to={"/lessons"} className="flex items-center px-4 py-4 hover:bg-secondary">
                 <BookOpen className="w-5 h-5 mr-3" />
                 Lessons
-            </div>
+            </Link>
             <Link to={"/repetitions"} className="flex items-center px-4 py-4 hover:bg-secondary">
                 <RepeatIcon className="w-5 h-5 mr-3" />
                 Repetitions
             </Link>
-            <div className="flex items-center px-4 py-4 hover:bg-secondary">
+            <Link to={"/language-games"} className="flex items-center px-4 py-4 hover:bg-secondary">
                 <Gamepad2 className="w-5 h-5 mr-3" />
                 Language Games
-            </div>
-            <div className="flex items-center px-4 py-4 hover:bg-secondary">
+            </Link>
+            <Link to={"/groups"} className="flex items-center px-4 py-4 hover:bg-secondary">
+                <Users className="w-5 h-5 mr-3" />
+                Groups
+            </Link>
+            <Link to={"/profile"} className="flex items-center px-4 py-4 hover:bg-secondary">
                 <UserCircle className="w-5 h-5 mr-3" />
                 Profile
-            </div>
+            </Link>
             <div className="py-12">
                 <button onClick={handleLogout} className="flex items-center px-4 py-4 hover:bg-secondary">
                     <LogOut className="w-5 h-5 mr-3" />
