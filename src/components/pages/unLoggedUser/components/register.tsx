@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import apiClient from "@/interceptor/axios-interceptor";
 import { useNavigate } from "react-router-dom";
+import { useUser } from '@/components/utils/UserContext';
 
 export function Register() {
   const [email, setEmail] = useState('');
@@ -12,6 +13,7 @@ export function Register() {
   const [lastName, setLastName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('student');
+  const { login } = useUser();
 
   const navigate = useNavigate();
 
@@ -30,6 +32,9 @@ export function Register() {
         lastName,
         role,
       });
+
+      const profileInformations = await apiClient.get('/api/v1/user/profile');
+      login(profileInformations.data);
 
       console.log('Signup successful', response.data);
       navigate(`/home`);

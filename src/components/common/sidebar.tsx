@@ -3,13 +3,16 @@ import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { useNavigate } from "react-router-dom";
 import apiClient from "@/interceptor/axios-interceptor";
+import { useUser } from '@/components/utils/UserContext';
 
 export function Sidebar() {
     const navigate = useNavigate();
+    const { logout } = useUser();
 
     const handleLogout = async () => {
         try {
           await apiClient.post('/api/v1/auth/logout');
+          logout();
           navigate('/');
         } catch (error) {
           console.error('Logout failed', error);
