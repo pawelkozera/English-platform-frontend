@@ -21,8 +21,7 @@ export function Login() {
         password,
       });
 
-      const profileInformations = await apiClient.get('/api/v1/user/profile');
-      login(profileInformations.data);
+      login();
 
       console.log('Signin successful', response.data);
       navigate(`/home`);

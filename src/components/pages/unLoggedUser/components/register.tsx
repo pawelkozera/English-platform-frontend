@@ -33,8 +33,7 @@ export function Register() {
         role,
       });
 
-      const profileInformations = await apiClient.get('/api/v1/user/profile');
-      login(profileInformations.data);
+      login();
 
       console.log('Signup successful', response.data);
       navigate(`/home`);
