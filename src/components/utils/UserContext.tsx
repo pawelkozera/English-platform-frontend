@@ -15,8 +15,11 @@ interface Group {
 interface UserContextType {
   user: User | null;
   groups: Group[];
+  selectedGroup: Group | null;
   login: () => void;
   logout: () => void;
+  setSelectedGroup: (group: Group | null) => void;
+  fetchGroups: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -31,6 +34,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const storedGroups = localStorage.getItem("groups");
     return storedGroups ? JSON.parse(storedGroups) : [];
   });
+
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
 
   const login = async () => {
     try {
@@ -48,6 +53,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const response = await apiClient.get('/api/v1/user/allGroups');
     setGroups(response.data);
     localStorage.setItem("groups", JSON.stringify(response.data));
+    if (response.data.length > 0) {
+      setSelectedGroup(response.data[0]);
+    }
   };
 
   const logout = () => {
@@ -66,12 +74,16 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (storedGroups) {
-      setGroups(JSON.parse(storedGroups));
+      const groups = JSON.parse(storedGroups);
+      setGroups(groups);
+      if (groups.length > 0) {
+        setSelectedGroup(groups[0]);
+      }
     }
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, groups, login, logout }}>
+    <UserContext.Provider value={{ user, groups, selectedGroup, login, logout, setSelectedGroup, fetchGroups}}>
       {children}
     </UserContext.Provider>
   );

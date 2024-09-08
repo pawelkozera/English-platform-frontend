@@ -21,6 +21,7 @@ export function GroupManagementJoinedGroups() {
       <CardContent className="space-y-4">
         <div className="flex space-x-2">
           <Input placeholder="Enter group code" />
+          <Input placeholder="Enter group password" />
           <Button>Join Group</Button>
         </div>
         <div className="grid grid-cols-2 gap-4">

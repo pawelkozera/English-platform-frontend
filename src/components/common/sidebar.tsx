@@ -5,18 +5,17 @@ import { useNavigate } from "react-router-dom";
 import apiClient from "@/interceptor/axios-interceptor";
 import { useUser } from '@/components/utils/UserContext';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export function Sidebar() {
     const navigate = useNavigate();
-    const { logout, groups } = useUser();
-    const [selectedGroup, setSelectedGroup] = useState<string>("");
+    const { logout, groups, selectedGroup, setSelectedGroup } = useUser();
 
     useEffect(() => {
-        if (groups.length > 0) {
-            setSelectedGroup(groups[0].id.toString());
+        if (groups.length > 0 && !selectedGroup) {
+            setSelectedGroup(groups[0]);
         }
-    }, [groups]);
+    }, [groups, selectedGroup, setSelectedGroup]);
 
     const handleLogout = async () => {
         try {
@@ -26,7 +25,7 @@ export function Sidebar() {
         } catch (error) {
           console.error('Logout failed', error);
         }
-      };
+    };    
 
   return (
     <aside className="w-64 shadow-md">
@@ -42,13 +41,16 @@ export function Sidebar() {
             <nav className="mt-6">
                 <div className="my-8">
                     <Select
-                        disabled={groups.length === 0} 
-                        onValueChange={(value) => setSelectedGroup(value)}
-                        value={selectedGroup}
+                        disabled={groups.length === 0}
+                        onValueChange={(value) => {
+                            const group = groups.find(g => g.id.toString() === value);
+                            setSelectedGroup(group || null);
+                        }}
+                        value={selectedGroup?.id.toString() || ""}
                     >
                         <p className="px-4 py-4">Current group</p>
                         <SelectTrigger>
-                            <SelectValue placeholder={groups.length === 0 ? "No groups available" : groups[0].groupName} />
+                            <SelectValue placeholder={groups.length === 0 ? "No groups available" : selectedGroup?.groupName} />
                         </SelectTrigger>
                         {groups.length > 0 && (
                             <SelectContent>
