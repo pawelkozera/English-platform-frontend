@@ -56,6 +56,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     if (response.data.length > 0) {
       setSelectedGroup(response.data[0]);
     }
+    else {
+      setSelectedGroup(null);
+    }
   };
 
   const logout = () => {
@@ -63,6 +66,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setGroups([]);
     localStorage.removeItem("user");
     localStorage.removeItem("groups");
+    setSelectedGroup(null);
   };
 
   useEffect(() => {
@@ -78,6 +82,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       setGroups(groups);
       if (groups.length > 0) {
         setSelectedGroup(groups[0]);
+      }
+      else {
+        setSelectedGroup(null);
       }
     }
   }, []);

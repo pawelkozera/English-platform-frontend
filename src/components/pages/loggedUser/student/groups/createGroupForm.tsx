@@ -2,10 +2,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import apiClient from "@/interceptor/axios-interceptor";
+import { useUser } from '@/components/utils/UserContext';
 
 export function CreateGroupForm() {
   const [groupName, setGroupName] = useState("");
   const [groupPassword, setGroupPassword] = useState("");
+
+  const { fetchGroups } = useUser();
 
   const handleCreateGroup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,6 +17,8 @@ export function CreateGroupForm() {
           groupName,
           groupPassword,
         });
+
+        fetchGroups();
   
         console.log('Created group successful', response.data);
       } catch (error) {
