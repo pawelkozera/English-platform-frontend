@@ -14,8 +14,8 @@ export function CreateGroupForm() {
     e.preventDefault();
     try {
         const response = await apiClient.post('/api/v1/group/createGroup', {
-          groupName,
-          groupPassword,
+          groupName: groupName,
+          password: groupPassword,
         });
 
         fetchGroups();

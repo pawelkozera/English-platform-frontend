@@ -10,6 +10,7 @@ interface User {
 interface Group {
   id: number;
   groupName: string;
+  groupCode: string;
 }
 
 interface UserContextType {
