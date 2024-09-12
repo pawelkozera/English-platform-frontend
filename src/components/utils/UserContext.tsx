@@ -1,17 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import apiClient from "@/interceptor/axios-interceptor";
 
-interface User {
-  firstName: string;
-  lastName: string;
-  email: string;
-}
-
-interface Group {
-  id: number;
-  groupName: string;
-  groupCode: string;
-}
+import { User, Group } from "@/lib/types";
 
 interface UserContextType {
   user: User | null;
