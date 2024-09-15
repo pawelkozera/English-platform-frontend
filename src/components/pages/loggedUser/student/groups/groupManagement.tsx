@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { GroupManagementJoinedGroups } from './groupManagementJoinedGroups'
-import { GroupManagementOwnedGroups } from './groupManagementOwnedGroups'
+import { GroupManagementJoinedGroups } from './joinedGroups/groupManagementJoinedGroups'
+import { GroupManagementOwnedGroups } from './ownedGroups/groupManagementOwnedGroups'
 
 export function GroupManagement() {
   return (

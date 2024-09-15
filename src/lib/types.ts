@@ -8,4 +8,5 @@ export interface User {
     id: number;
     groupName: string;
     groupCode: string;
+    owner: boolean;
   }
