@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import apiClient from "@/interceptor/axios-interceptor";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from 'react-query';
+import { signin } from '@/lib/api/userApi';
 import { useUser } from '@/components/utils/UserContext';
 
 export function Login() {
@@ -14,10 +14,7 @@ export function Login() {
 
   const navigate = useNavigate();
 
-  const mutation = useMutation(async () => {
-    const response = await apiClient.post('/api/v1/auth/signin', { email, password });
-    return response.data;
-  }, {
+  const mutation = useMutation(signin, {
     onSuccess: (data) => {
       login();
       console.log('Signin successful', data);
@@ -30,7 +27,10 @@ export function Login() {
 
   const handleSignin = async (event: React.FormEvent) => {
     event.preventDefault();
-    mutation.mutate();
+    mutation.mutate({
+      email,
+      password,
+    });
   };
       
   return (

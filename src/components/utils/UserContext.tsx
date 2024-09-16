@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import apiClient from "@/interceptor/axios-interceptor";
+import { useQuery } from "react-query";
+import { fetchGroups } from "@/lib/api/groupApi";
+import { fetchProfile } from "@/lib/api/userApi";
 
 import { User, Group } from "@/lib/types";
 
@@ -10,7 +12,7 @@ interface UserContextType {
   login: () => void;
   logout: () => void;
   setSelectedGroup: (group: Group | null) => void;
-  fetchGroups: () => void;
+  refetchGroups: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -30,25 +32,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async () => {
     try {
-      const response = await apiClient.get('/api/v1/user/profile');
-      setUser(response.data);
-      localStorage.setItem("user", JSON.stringify(response.data));
+      const data = await fetchProfile();
+      setUser(data);
+      localStorage.setItem("user", JSON.stringify(data));
 
-      fetchGroups();
+      refetchGroups();
     } catch (error) {
       console.error('Login failed', error);
-    }
-  };
-
-  const fetchGroups = async () => {
-    const response = await apiClient.get('/api/v1/user/allGroups');
-    setGroups(response.data);
-    localStorage.setItem("groups", JSON.stringify(response.data));
-    if (response.data.length > 0) {
-      setSelectedGroup(response.data[0]);
-    }
-    else {
-      setSelectedGroup(null);
     }
   };
 
@@ -60,28 +50,37 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setSelectedGroup(null);
   };
 
+  const { refetch: refetchGroups } = useQuery('groups', fetchGroups, {
+    enabled: false,
+    cacheTime: 1,
+    staleTime: 0,
+    onSuccess: (data) => {
+      setGroups(data);
+      localStorage.setItem("groups", JSON.stringify(data));
+      if (data.length > 0) {
+        setSelectedGroup(data[0]);
+      } else {
+        setSelectedGroup(null);
+      }
+    },
+    onError: () => {
+      localStorage.removeItem("groups");
+      setGroups([]);
+      setSelectedGroup(null);
+    },
+  });
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    const storedGroups = localStorage.getItem("groups");
 
     if (storedUser) {
       setUser(JSON.parse(storedUser));
-    }
-
-    if (storedGroups) {
-      const groups = JSON.parse(storedGroups);
-      setGroups(groups);
-      if (groups.length > 0) {
-        setSelectedGroup(groups[0]);
-      }
-      else {
-        setSelectedGroup(null);
-      }
+      refetchGroups();
     }
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, groups, selectedGroup, login, logout, setSelectedGroup, fetchGroups}}>
+    <UserContext.Provider value={{ user, groups, selectedGroup, login, logout, setSelectedGroup, refetchGroups}}>
       {children}
     </UserContext.Provider>
   );

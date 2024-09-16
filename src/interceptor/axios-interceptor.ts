@@ -28,6 +28,8 @@ apiClient.interceptors.response.use(
 
         return apiClient(originalRequest);
       } catch (refreshError) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("groups");
         console.error('Failed to refresh token', refreshError);
         window.location.href = '/';
       }

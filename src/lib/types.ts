@@ -4,9 +4,32 @@ export interface User {
     email: string;
   }
   
-  export interface Group {
-    id: number;
-    groupName: string;
-    groupCode: string;
-    owner: boolean;
-  }
+export interface Group {
+  id: number;
+  groupName: string;
+  groupCode: string;
+  owner: boolean;
+}
+
+export interface CreateGroupParams {
+  groupName: string;
+  password: string;
+}
+
+export interface JoinGroupParams {
+  groupCode: string;
+  password: string;
+}
+
+export interface SignupParams {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  role?: string;
+}
+
+export interface SigninParams {
+  email: string;
+  password: string;
+}

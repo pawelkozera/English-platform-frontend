@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import apiClient from "@/interceptor/axios-interceptor";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from 'react-query';
 import { useUser } from '@/components/utils/UserContext';
+import { signup } from '@/lib/api/userApi';
 
 export function Register() {
   const [email, setEmail] = useState('');
@@ -18,19 +18,9 @@ export function Register() {
 
   const navigate = useNavigate();
 
-  const mutation = useMutation(async () => {
-    const response = await apiClient.post('/api/v1/auth/signup', {
-      email,
-      password,
-      firstName,
-      lastName,
-      role,
-    });
-    return response.data;
-  }, {
+  const mutation = useMutation(signup, {
     onSuccess: (data) => {
       login();
-
       console.log('Signup successful', data);
       navigate(`/home`);
     },
@@ -41,7 +31,13 @@ export function Register() {
 
   const handleSignup = async (event: React.FormEvent) => {
     event.preventDefault();
-    mutation.mutate();
+    mutation.mutate({
+      email,
+      password,
+      firstName,
+      lastName,
+      role,
+    });
   };
 
   return (

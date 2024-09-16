@@ -1,29 +1,32 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import apiClient from "@/interceptor/axios-interceptor";
+import { useMutation } from "react-query";
+import { createGroup } from "@/lib/api/groupApi";
 import { useUser } from '@/components/utils/UserContext';
 
 export function CreateGroupForm() {
   const [groupName, setGroupName] = useState("");
   const [groupPassword, setGroupPassword] = useState("");
 
-  const { fetchGroups } = useUser();
+  const { refetchGroups } = useUser();
+
+  const mutation = useMutation(createGroup, {
+    onSuccess: (data) => {
+      refetchGroups();
+      console.log('Created group successful', data);
+    },
+    onError: (error) => {
+      console.error('Error during group creation', error);
+    }
+  });
 
   const handleCreateGroup = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-        const response = await apiClient.post('/api/v1/group/createGroup', {
-          groupName: groupName,
-          password: groupPassword,
-        });
-
-        fetchGroups();
-  
-        console.log('Created group successful', response.data);
-      } catch (error) {
-        console.error('Error during group creation', error);
-      }
+    mutation.mutate({
+      groupName,
+      password: groupPassword,
+    })
   };
 
   return (

@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { useMutation } from "react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import apiClient from '@/interceptor/axios-interceptor';
+import { joinGroup } from '@/lib/api/groupApi';
 
 interface GroupJoinFormProps {
   onJoinSuccess: () => void;
@@ -11,21 +12,24 @@ export function GroupJoinForm({ onJoinSuccess }: GroupJoinFormProps) {
   const [groupCode, setGroupCode] = useState('');
   const [groupPassword, setGroupPassword] = useState('');
 
-  const handleJoinGroup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await apiClient.post('/api/v1/group/join', {
-        groupCode: groupCode,
-        password: groupPassword,
-      });
-
-      console.log('Joined group successfully', response.data);
+  const mutation = useMutation(joinGroup, {
+    onSuccess: (data) => {
       onJoinSuccess();
       setGroupCode('');
       setGroupPassword('');
-    } catch (error) {
+      console.log('Joined group successfully', data);
+    },
+    onError: (error) => {
       console.error('Error during group joining', error);
     }
+  });
+
+  const handleJoinGroup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    mutation.mutate({
+      groupCode,
+      password: groupPassword,
+    })
   };
 
   return (

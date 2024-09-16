@@ -5,10 +5,10 @@ import { GroupStatistics } from '../common/groupStatistics';
 import { GroupJoinForm } from './groupJoinForm';
 
 export function GroupManagementJoinedGroups() {
-  const { groups, selectedGroup, setSelectedGroup, fetchGroups } = useUser();
+  const { groups, selectedGroup, setSelectedGroup, refetchGroups } = useUser();
 
   const handleJoinSuccess = () => {
-    fetchGroups();
+    refetchGroups();
   };
 
   const handleLeaveGroup = () => {
