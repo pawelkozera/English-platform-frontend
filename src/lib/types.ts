@@ -33,3 +33,15 @@ export interface SigninParams {
   email: string;
   password: string;
 }
+
+export interface TaskAdd {
+  taskTypeName: string;
+  content: string | File;
+  correctAnswer: string;
+  lessonId: number;
+}
+
+export interface LessonAdd {
+  title: string;
+  groupId: number;
+}
