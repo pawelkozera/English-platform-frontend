@@ -18,6 +18,7 @@ export function GroupManagementOwnedGroups() {
       <TabsContent value="addLesson">
         <AddLessonToGroup />
         <AddLesson />
+        <AddTask />
       </TabsContent>
     </Tabs>
   )

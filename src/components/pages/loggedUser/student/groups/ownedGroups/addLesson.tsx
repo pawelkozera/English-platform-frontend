@@ -12,11 +12,10 @@ export function AddLesson() {
   const [title, setTitle] = useState<string>("");
   const [groupId, setGroupId] = useState<number | null>(null);
 
-  const { groups, refetchGroups } = useUser();
+  const { groups } = useUser();
 
   const mutation = useMutation(addLesson, {
     onSuccess: (data) => {
-      refetchGroups();
       console.log("Lesson added successfully", data);
     },
     onError: (error) => {
