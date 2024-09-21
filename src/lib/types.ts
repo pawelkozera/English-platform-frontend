@@ -45,3 +45,8 @@ export interface LessonAdd {
   title: string;
   groupId: number;
 }
+
+export interface WordAdd {
+  word: string;
+  translation: string;
+}

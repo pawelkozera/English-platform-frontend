@@ -4,6 +4,7 @@ import { CreateGroup } from './createGroup'
 
 import { AddTask } from "./addTask"
 import { AddLesson } from "./addLesson"
+import { AddWord } from "./addWord"
 
 export function GroupManagementOwnedGroups() {
   return (
@@ -17,6 +18,7 @@ export function GroupManagementOwnedGroups() {
       </TabsContent>
       <TabsContent value="addLesson">
         <AddLessonToGroup />
+        <AddWord />
         <AddLesson />
         <AddTask />
       </TabsContent>
