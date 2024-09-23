@@ -9,12 +9,16 @@ import { addWord } from "@/lib/api/wordApi";
 export function AddWord() {
   const [word, setWord] = useState<string>("");
   const [translation, setTranslation] = useState<string>("");
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const mutation = useMutation(addWord, {
     onSuccess: (data) => {
       console.log("Word added successfully", data);
       setWord("");
       setTranslation("");
+      setAudioFile(null);
+      setImageFile(null);
     },
     onError: (error) => {
       console.error("Error during word creation", error);
@@ -29,10 +33,13 @@ export function AddWord() {
       return;
     }
 
-    mutation.mutate({
-      word,
-      translation,
-    });
+    const formData = new FormData();
+    formData.append("word", word);
+    formData.append("translation", translation);
+    if (audioFile) formData.append("audioFile", audioFile);
+    if (imageFile) formData.append("imageFile", imageFile);
+
+    mutation.mutate(formData);
   };
 
   return (
@@ -57,6 +64,24 @@ export function AddWord() {
               placeholder="Wpisz tłumaczenie"
               value={translation}
               onChange={(e) => setTranslation(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label>Plik Audio (Opcjonalnie)</Label>
+            <Input
+              type="file"
+              accept="audio/*"
+              onChange={(e) => setAudioFile(e.target.files?.[0] || null)}
+            />
+          </div>
+
+          <div>
+            <Label>Plik Obrazu (Opcjonalnie)</Label>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImageFile(e.target.files?.[0] || null)}
             />
           </div>
         </CardContent>
