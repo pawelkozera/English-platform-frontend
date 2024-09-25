@@ -36,6 +36,7 @@ export interface SigninParams {
 
 export interface TaskAdd {
   taskTypeName: string;
+  subTypeName: string;
   content: string | File;
   correctAnswer: string;
   lessonId: number;
@@ -44,4 +45,12 @@ export interface TaskAdd {
 export interface LessonAdd {
   title: string;
   groupId: number;
+}
+
+export interface Word {
+  id: number;
+  word: string;
+  translation: string;
+  audioFilePath: string;
+  imageFilePath: string;
 }

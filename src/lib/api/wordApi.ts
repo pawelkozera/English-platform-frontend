@@ -8,3 +8,8 @@ export const addWord = async (formData: FormData): Promise<any> => {
   });
   return response.data;
 };
+
+export const fetchWordsOwnedByUser = async (): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/word/all/owned/by/user`);
+  return response.data;
+};

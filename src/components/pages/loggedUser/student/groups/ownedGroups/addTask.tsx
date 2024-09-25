@@ -48,6 +48,7 @@ export function AddTask() {
   
     mutation.mutate({
       taskTypeName: taskType,
+      subTypeName: "",
       content: content instanceof File ? content : content.toString(),
       correctAnswer,
       lessonId: selectedLesson || 0,
