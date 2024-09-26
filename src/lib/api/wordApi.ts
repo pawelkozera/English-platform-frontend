@@ -9,7 +9,12 @@ export const addWord = async (formData: FormData): Promise<any> => {
   return response.data;
 };
 
-export const fetchWordsOwnedByUser = async (): Promise<any> => {
-  const response = await apiClient.get(`/api/v1/word/all/owned/by/user`);
+export const fetchWordsOwnedByUser = async (page: number = 0, size: number = 10): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/word/all/owned/by/user`, {
+    params: {
+      page: page,
+      size: size,
+    },
+  });
   return response.data;
 };

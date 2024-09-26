@@ -13,14 +13,21 @@ import { addTask } from "@/lib/api/taskApi";
 type TaskType = 'typing' | 'connection'
 type TypingType = 'translation' | 'reverseTranslation' | 'retype' | 'image' | 'audio'
 type ConnectionType = 'translation' | 'image'
+type LessonResponse = {
+  title: string;
+  lessonId: number;
+};
 
 export function TaskCreator() {
-  const [lessons, setLessons] = useState<any[]>([]);
-  const [userWords, setUserWords] = useState<any[]>([]);
+  const [lessons, setLessons] = useState<LessonResponse[]>([]);
+  const [userWords, setUserWords] = useState<any[]>([])
   const [taskType, setTaskType] = useState<TaskType>('typing')
   const [subTaskType, setSubTaskType] = useState<TypingType | ConnectionType>('translation')
   const [selectedWords, setSelectedWords] = useState<number[]>([])
-  const [selectedLesson, setSelectedLesson] = useState<number | null>(null)
+  const [selectedLesson, setSelectedLesson] = useState<LessonResponse | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(20);
+  const [totalPages, setTotalPages] = useState(0);
   const { selectedGroup } = useUser()
 
   const mutation = useMutation(addTask, {
@@ -50,15 +57,16 @@ export function TaskCreator() {
   useEffect(() => {
     const fetchWords = async () => {
       try {
-        const wordsData = await fetchWordsOwnedByUser();
-        setUserWords(wordsData);
+        const { content, totalPages } = await fetchWordsOwnedByUser(currentPage, pageSize);
+        setUserWords(content);
+        setTotalPages(totalPages);
       } catch (error) {
         console.error("Error fetching words:", error);
       }
     };
 
     fetchWords();
-  }, []);
+  }, [currentPage, pageSize]);
 
   const handleWordSelection = (wordId: number) => {
     setSelectedWords(prev => 
@@ -85,6 +93,18 @@ export function TaskCreator() {
     </div>
   )
 
+  const renderPagination = () => (
+    <div className="flex justify-between items-center mt-4">
+      <Button disabled={currentPage === 0} onClick={() => setCurrentPage(prev => prev - 1)}>
+        Previous
+      </Button>
+      <span>Page {currentPage + 1} of {totalPages}</span>
+      <Button disabled={currentPage === totalPages - 1} onClick={() => setCurrentPage(prev => prev + 1)}>
+        Next
+      </Button>
+    </div>
+  )
+
   const renderTaskPreview = () => {
     return (
       <></>
@@ -101,13 +121,19 @@ export function TaskCreator() {
           <div className="space-y-4">
             <div>
               <Label htmlFor="lesson">Select Lesson</Label>
-              <Select onValueChange={(value) => setSelectedLesson(value ? Number(value) : null)}>
+              <div className="mb-4" />
+              <Select onValueChange={(value) => {
+                  const lesson = lessons.find(l => l.lessonId === Number(value));
+                  setSelectedLesson(lesson || null);
+                }}>
                 <SelectTrigger>
                   <SelectValue placeholder="Choose a lesson" />
                 </SelectTrigger>
                 <SelectContent>
-                  {lessons.map(l => (
-                    <SelectItem key={l} value={l}>{l}</SelectItem>
+                  {lessons.map(lesson => (
+                    <SelectItem key={lesson.lessonId} value={lesson.lessonId.toString()}>
+                      {lesson.title}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -115,6 +141,7 @@ export function TaskCreator() {
             
             <div>
               <Label>Task Type</Label>
+              <div className="mb-4" />
               <RadioGroup onValueChange={(value: TaskType) => setTaskType(value)} defaultValue="typing">
                 <div className="flex space-x-4">
                   <div className="flex items-center space-x-2">
@@ -186,6 +213,7 @@ export function TaskCreator() {
         </CardHeader>
         <CardContent>
           {renderWordSelection()}
+          {renderPagination()}
         </CardContent>
       </Card>
 
