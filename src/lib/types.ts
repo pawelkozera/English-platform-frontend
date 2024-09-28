@@ -36,10 +36,11 @@ export interface SigninParams {
 
 export interface TaskAdd {
   taskTypeName: string;
-  subTypeName: string;
+  taskSubTypeName: string;
   content: string | File;
   correctAnswer: string;
   lessonId: number;
+  wordIds: number[];
 }
 
 export interface LessonAdd {

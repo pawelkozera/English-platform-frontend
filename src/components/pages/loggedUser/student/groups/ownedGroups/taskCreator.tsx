@@ -39,6 +39,22 @@ export function TaskCreator() {
     },
   });
 
+  const handleSubmit = () => {
+    if (!selectedLesson || selectedWords.length === 0) {
+      alert("Please select a lesson and words.");
+      return;
+    }
+  
+    mutation.mutate({
+      taskTypeName: taskType,
+      taskSubTypeName: subTaskType,
+      content: "",
+      correctAnswer: "",
+      lessonId: selectedLesson.lessonId,
+      wordIds: selectedWords
+    });
+  };
+
   useEffect(() => {
     if (selectedGroup) {
       const fetchLessons = async () => {
@@ -57,16 +73,23 @@ export function TaskCreator() {
   useEffect(() => {
     const fetchWords = async () => {
       try {
-        const { content, totalPages } = await fetchWordsOwnedByUser(currentPage, pageSize);
-        setUserWords(content);
-        setTotalPages(totalPages);
+        const response = await fetchWordsOwnedByUser();
+        console.log("Fetched words response:", response);
+  
+        if (response && response._embedded && response._embedded.wordResponseList) {
+          setUserWords(response._embedded.wordResponseList);
+          console.log("Fetched words:", response._embedded.wordResponseList);
+        } else {
+          console.error("No words found");
+        }
       } catch (error) {
         console.error("Error fetching words:", error);
       }
     };
-
+  
     fetchWords();
   }, [currentPage, pageSize]);
+  
 
   const handleWordSelection = (wordId: number) => {
     setSelectedWords(prev => 
@@ -81,7 +104,7 @@ export function TaskCreator() {
              onClick={() => handleWordSelection(word.id)}>
           <CardContent className="p-4">
             <div className="flex items-center space-x-4">
-              <img src={word.img} alt={word.word} className="w-12 h-12 object-cover rounded" />
+              <img src={word.imageFilePath} alt={word.word} className="w-12 h-12 object-cover rounded" />
               <div>
                 <p className="font-semibold">{word.word}</p>
                 <p className="text-sm text-gray-500">{word.translation}</p>
@@ -91,18 +114,20 @@ export function TaskCreator() {
         </Card>
       ))}
     </div>
-  )
+  );  
 
   const renderPagination = () => (
-    <div className="flex justify-between items-center mt-4">
-      <Button disabled={currentPage === 0} onClick={() => setCurrentPage(prev => prev - 1)}>
-        Previous
-      </Button>
-      <span>Page {currentPage + 1} of {totalPages}</span>
-      <Button disabled={currentPage === totalPages - 1} onClick={() => setCurrentPage(prev => prev + 1)}>
-        Next
-      </Button>
-    </div>
+    totalPages > 0 && (
+      <div className="flex justify-between items-center mt-4">
+        <Button disabled={currentPage === 0} onClick={() => setCurrentPage(prev => prev - 1)}>
+          Previous
+        </Button>
+        <span>Page {currentPage + 1} of {totalPages}</span>
+        <Button disabled={currentPage === totalPages - 1} onClick={() => setCurrentPage(prev => prev + 1)}>
+          Next
+        </Button>
+      </div>
+    )
   )
 
   const renderTaskPreview = () => {
@@ -226,7 +251,11 @@ export function TaskCreator() {
         </CardContent>
       </Card>
 
-      <Button className="mt-4 w-full" disabled={!selectedLesson || selectedWords.length === 0}>
+      <Button 
+        className="mt-4 w-full" 
+        disabled={!selectedLesson || selectedWords.length === 0}
+        onClick={handleSubmit}
+      >
         Create Task
       </Button>
     </div>
