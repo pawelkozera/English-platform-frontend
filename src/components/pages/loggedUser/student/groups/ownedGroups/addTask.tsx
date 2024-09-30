@@ -48,10 +48,11 @@ export function AddTask() {
   
     mutation.mutate({
       taskTypeName: taskType,
-      subTypeName: "",
+      taskSubTypeName: "",
       content: content instanceof File ? content : content.toString(),
       correctAnswer,
       lessonId: selectedLesson || 0,
+      wordIds: []
     });
   };  
 

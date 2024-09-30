@@ -73,11 +73,12 @@ export function TaskCreator() {
   useEffect(() => {
     const fetchWords = async () => {
       try {
-        const response = await fetchWordsOwnedByUser();
+        const response = await fetchWordsOwnedByUser(currentPage, pageSize);
         console.log("Fetched words response:", response);
   
         if (response && response._embedded && response._embedded.wordResponseList) {
           setUserWords(response._embedded.wordResponseList);
+          setTotalPages(response.page.totalPages);
           console.log("Fetched words:", response._embedded.wordResponseList);
         } else {
           console.error("No words found");
