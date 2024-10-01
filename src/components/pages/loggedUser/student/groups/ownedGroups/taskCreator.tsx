@@ -9,6 +9,7 @@ import { fetchLessonsFromGroup } from '@/lib/api/lessonApi'
 import { fetchWordsOwnedByUser } from '@/lib/api/wordApi'
 import { useMutation } from "react-query";
 import { addTask } from "@/lib/api/taskApi";
+import { TaskConnection } from '../../task/taskConnection'
 
 type TaskType = 'typing' | 'connection'
 type TypingType = 'translation' | 'reverseTranslation' | 'retype' | 'image' | 'audio'
@@ -249,6 +250,7 @@ export function TaskCreator() {
         </CardHeader>
         <CardContent>
           {renderTaskPreview()}
+          <TaskConnection></TaskConnection>
         </CardContent>
       </Card>
 
