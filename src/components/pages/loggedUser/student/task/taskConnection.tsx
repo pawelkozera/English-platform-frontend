@@ -1,17 +1,13 @@
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { CheckCircle, XCircle } from 'lucide-react'
-
-type Word = {
-  english: string
-  translation: string
-}
+import { Word } from '@/lib/types';
 
 const words: Word[] = [
-  { english: "Hello", translation: "Hola" },
-  { english: "Goodbye", translation: "Adiós" },
-  { english: "Thank you", translation: "Gracias" },
-  { english: "Please", translation: "Por favor" },
+  { id: 1, word: "Hello", translation: "Hola", audioFilePath: "", imageFilePath: "" },
+  { id: 2, word: "Goodbye", translation: "Adiós", audioFilePath: "", imageFilePath: "" },
+  { id: 3, word: "Thank you", translation: "Gracias", audioFilePath: "", imageFilePath: "" },
+  { id: 4, word: "Please", translation: "Por favor", audioFilePath: "", imageFilePath: "" },
 ]
 
 const availableColors = ['blue', 'green', 'red', 'purple', 'orange']
@@ -111,7 +107,7 @@ export function TaskConnection() {
               style={{ backgroundColor: getBlockColor(index, true) }}
               onClick={() => handleBlockClick(index, true)}
             >
-              {word.english}
+              {word.word}
             </div>
           ))}
         </div>

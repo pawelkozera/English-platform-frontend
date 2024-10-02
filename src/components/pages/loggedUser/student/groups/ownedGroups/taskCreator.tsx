@@ -10,6 +10,7 @@ import { fetchWordsOwnedByUser } from '@/lib/api/wordApi'
 import { useMutation } from "react-query";
 import { addTask } from "@/lib/api/taskApi";
 import { TaskConnection } from '../../task/taskConnection'
+import { TaskTyping } from '../../task/taskTyping'
 
 type TaskType = 'typing' | 'connection'
 type TypingType = 'translation' | 'reverseTranslation' | 'retype' | 'image' | 'audio'
@@ -250,7 +251,11 @@ export function TaskCreator() {
         </CardHeader>
         <CardContent>
           {renderTaskPreview()}
-          <TaskConnection></TaskConnection>
+          <TaskTyping words={[{ id: 1, word: "Hello", translation: "Hola", audioFilePath: "", imageFilePath: "" },
+  { id: 2, word: "Goodbye", translation: "Adios", audioFilePath: "", imageFilePath: "" },
+  { id: 3, word: "Thank you", translation: "Gracias", audioFilePath: "", imageFilePath: "" },
+  { id: 4, word: "Please", translation: "Por favor", audioFilePath: "", imageFilePath: "" },]} questionType={"translation"}></TaskTyping>
+        <TaskConnection></TaskConnection>
         </CardContent>
       </Card>
 
