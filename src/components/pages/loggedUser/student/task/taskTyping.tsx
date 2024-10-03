@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import { Progress } from "@/components/ui/progress"
 import { Volume2 } from "lucide-react"
 import { Word } from "@/lib/types"
 
@@ -17,17 +18,33 @@ export function TaskTyping({ words, questionType }: LanguageLearningProps) {
   const [userInput, setUserInput] = useState("")
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
   const [hasSubmitted, setHasSubmitted] = useState(false)
+  const [completedWords, setCompletedWords] = useState<number[]>([])
 
-  const currentWord = words[currentWordIndex]
+  const availableWords = words.filter((_, index) => !completedWords.includes(index))
+  const progress = ((words.length - availableWords.length) / words.length) * 100
 
   useEffect(() => {
-    setUserInput("")
-    setIsCorrect(null)
-    setHasSubmitted(false)
+    if (availableWords.length === 0) {
+      setCurrentWordIndex(0)
+    } else if (currentWordIndex >= availableWords.length) {
+      setCurrentWordIndex(0)
+    }
+  }, [availableWords, currentWordIndex])
+
+  const currentWord = availableWords.length > 0 ? availableWords[currentWordIndex] : null
+
+  useEffect(() => {
+    if (currentWord) {
+      setUserInput("")
+      setIsCorrect(null)
+      setHasSubmitted(false)
+    }
   }, [currentWordIndex, questionType])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    if (!currentWord) return
+
     let correct = false
 
     switch (questionType) {
@@ -49,12 +66,22 @@ export function TaskTyping({ words, questionType }: LanguageLearningProps) {
   }
 
   const handleNext = () => {
-    setCurrentWordIndex((prevIndex) => (prevIndex + 1) % words.length)
+    if (currentWord && isCorrect) {
+      setCompletedWords((prev) => [...prev, words.indexOf(currentWord)])
+    }
+
+    if (availableWords.length >= 1) {
+      setCurrentWordIndex((prevIndex) => (prevIndex + 1) % availableWords.length)
+    } else {
+      alert("All words completed!")
+    }
     setIsCorrect(null)
     setHasSubmitted(false)
   }
 
   const renderQuestion = () => {
+    if (!currentWord) return null
+
     switch (questionType) {
       case "translation":
         return <p className="text-2xl font-semibold mb-4">{currentWord.word}</p>
@@ -90,35 +117,41 @@ export function TaskTyping({ words, questionType }: LanguageLearningProps) {
 
   return (
     <div className="max-w-md mx-auto bg-background p-8 rounded-xl shadow-lg">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="flex flex-col items-center">
-          {renderQuestion()}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="answer" className="text-sm font-medium text-muted-foreground">Your answer:</Label>
-          <Input
-            id="answer"
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            placeholder="Type your answer here"
-            className="w-full"
-          />
-        </div>
-        <div className="flex justify-between space-x-4">
-          <Button type="submit" className="flex-1">Submit</Button>
-          <Button
-            onClick={handleNext}
-            variant="outline"
-            className="flex-1"
-            disabled={!hasSubmitted}
-          >
-            Next
-          </Button>
-        </div>
-      </form>
+      <p className="mb-2">Progress: {words.length - availableWords.length} / {words.length}</p>
+      <Progress value={progress} className="mb-6" />
+      {availableWords.length > 0 ? (
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex flex-col items-center">
+            {renderQuestion()}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="answer" className="text-sm font-medium text-muted-foreground">Your answer:</Label>
+            <Input
+              id="answer"
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              placeholder="Type your answer here"
+              className="w-full"
+            />
+          </div>
+          <div className="flex justify-between space-x-4">
+            <Button type="submit" className="flex-1">Submit</Button>
+            <Button
+              onClick={handleNext}
+              variant="outline"
+              className="flex-1"
+              disabled={!hasSubmitted}
+            >
+              Next
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <div className="text-center">You've completed all the words!</div>
+      )}
       {isCorrect !== null && hasSubmitted && (
         <div className={`mt-6 p-3 text-center rounded-md ${isCorrect ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-          {isCorrect ? "Correct!" : `Incorrect. The correct answer is: ${questionType === "translation" ? currentWord.translation : currentWord.word}.`}
+          {isCorrect ? "Correct!" : `Incorrect. The correct answer is: ${questionType === "translation" ? currentWord?.translation : currentWord?.word}.`}
         </div>
       )}
     </div>
