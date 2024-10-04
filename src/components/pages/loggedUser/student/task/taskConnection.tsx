@@ -2,17 +2,16 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { CheckCircle, XCircle } from 'lucide-react'
 import { Word } from '@/lib/types';
-
-const words: Word[] = [
-  { id: 1, word: "Hello", translation: "Hola", audioFilePath: "", imageFilePath: "" },
-  { id: 2, word: "Goodbye", translation: "Adiós", audioFilePath: "", imageFilePath: "" },
-  { id: 3, word: "Thank you", translation: "Gracias", audioFilePath: "", imageFilePath: "" },
-  { id: 4, word: "Please", translation: "Por favor", audioFilePath: "", imageFilePath: "" },
-]
+import { ConnectionType } from '@/lib/types';
 
 const availableColors = ['blue', 'green', 'red', 'purple', 'orange']
 
-export function TaskConnection() {
+interface TaskConnectionProps {
+  words: Word[]
+  questionType: ConnectionType
+}
+
+export function TaskConnection({ words, questionType }: TaskConnectionProps) {
   const [selectedPair, setSelectedPair] = useState<[number, number] | null>(null)
   const [connections, setConnections] = useState<[number, number][]>([])
   const [checkResult, setCheckResult] = useState<boolean | null>(null)
@@ -75,11 +74,16 @@ export function TaskConnection() {
   }  
 
   const checkAnswers = () => {
+    if (connections.length !== words.length) {
+      setCheckResult(false);
+      return;
+    }
+  
     const isCorrect = connections.every(([englishIndex, translationIndex]) =>
       words[englishIndex].translation === words[translationIndex].translation
     )
     setCheckResult(isCorrect)
-  }
+  };  
 
   const getBlockColor = (index: number, isEnglish: boolean) => {
     const connectionIndex = connections.findIndex(conn =>
@@ -112,23 +116,40 @@ export function TaskConnection() {
           ))}
         </div>
         <div className="w-1/2 pl-4">
-          {words.map((word, index) => (
-            <div
-              key={`translation-${index}`}
-              className="mb-4 p-3 border rounded cursor-pointer text-center"
-              style={{ backgroundColor: getBlockColor(index, false) }}
-              onClick={() => handleBlockClick(index, false)}
-            >
-              {word.translation}
-            </div>
-          ))}
+          {questionType === 'translation' ? (
+            words.map((word, index) => (
+              <div
+                key={`translation-${index}`}
+                className="mb-4 p-3 border rounded cursor-pointer text-center"
+                style={{ backgroundColor: getBlockColor(index, false) }}
+                onClick={() => handleBlockClick(index, false)}
+              >
+                {word.translation}
+              </div>
+            ))
+          ) : (
+            words.map((word, index) => (
+              <div
+                key={`image-${index}`}
+                className="mb-4 p-3 border rounded cursor-pointer text-center"
+                style={{ backgroundColor: getBlockColor(index, false) }}
+                onClick={() => handleBlockClick(index, false)}
+              >
+                <img src={word.imageFilePath} alt={word.translation} className="h-16 mx-auto" />
+              </div>
+            ))
+          )}
         </div>
       </div>
       <div className="mt-6 text-center">
-        <Button onClick={checkAnswers} className="px-6 py-2">
-          Check Answers
-        </Button>
-        {checkResult !== null && (
+        {words.length !== 0 && (
+          <>
+            <Button onClick={checkAnswers} className="px-6 py-2">
+              Check Answers
+            </Button>
+          </>
+        )}
+        {(checkResult !== null && words.length !== 0) && (
           <div className="mt-4 flex items-center justify-center">
             {checkResult ? (
               <>

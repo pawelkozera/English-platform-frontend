@@ -55,3 +55,6 @@ export interface Word {
   audioFilePath: string;
   imageFilePath: string;
 }
+
+export type TypingType = "translation" | "reverseTranslation" | "image" | "retyping" | "audio";
+export type ConnectionType = 'translation' | 'image';

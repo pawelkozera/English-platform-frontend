@@ -11,10 +11,9 @@ import { useMutation } from "react-query";
 import { addTask } from "@/lib/api/taskApi";
 import { TaskConnection } from '../../task/taskConnection'
 import { TaskTyping } from '../../task/taskTyping'
+import { TypingType, ConnectionType } from '@/lib/types'
 
 type TaskType = 'typing' | 'connection'
-type TypingType = 'translation' | 'reverseTranslation' | 'retype' | 'image' | 'audio'
-type ConnectionType = 'translation' | 'image'
 type LessonResponse = {
   title: string;
   lessonId: number;
@@ -43,7 +42,6 @@ export function TaskCreator() {
 
   const handleSubmit = () => {
     if (!selectedLesson || selectedWords.length === 0) {
-      alert("Please select a lesson and words.");
       return;
     }
   
@@ -76,12 +74,10 @@ export function TaskCreator() {
     const fetchWords = async () => {
       try {
         const response = await fetchWordsOwnedByUser(currentPage, pageSize);
-        console.log("Fetched words response:", response);
   
         if (response && response._embedded && response._embedded.wordResponseList) {
           setUserWords(response._embedded.wordResponseList);
           setTotalPages(response.page.totalPages);
-          console.log("Fetched words:", response._embedded.wordResponseList);
         } else {
           console.error("No words found");
         }
@@ -133,12 +129,6 @@ export function TaskCreator() {
     )
   )
 
-  const renderTaskPreview = () => {
-    return (
-      <></>
-    )
-  }
-
   return (
     <div className="max-w-4xl mx-auto p-4">
       <Card>
@@ -170,7 +160,18 @@ export function TaskCreator() {
             <div>
               <Label>Task Type</Label>
               <div className="mb-4" />
-              <RadioGroup onValueChange={(value: TaskType) => setTaskType(value)} defaultValue="typing">
+              <RadioGroup 
+                value={taskType}
+                onValueChange={(value: TaskType) => {
+                  setTaskType(value);
+                  if (value === 'typing') {
+                    setSubTaskType('translation');
+                  } else if (value === 'connection') {
+                    setSubTaskType('translation');
+                  }
+                }} 
+                defaultValue="typing"
+              >
                 <div className="flex space-x-4">
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="typing" id="typing" />
@@ -188,7 +189,11 @@ export function TaskCreator() {
               <div>
                 <Label>Typing Options</Label>
                 <div className="mb-4" />
-                <RadioGroup onValueChange={(value: TypingType) => setSubTaskType(value)} defaultValue="translation">
+                <RadioGroup 
+                  value={subTaskType}
+                  onValueChange={(value: TypingType) => setSubTaskType(value)}
+                  defaultValue="translation"
+                >
                   <div className="flex space-x-4">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="translation" id="translation" />
@@ -217,7 +222,11 @@ export function TaskCreator() {
               <div>
                 <Label>Connect Options</Label>
                 <div className="mb-4" />
-                <RadioGroup onValueChange={(value: ConnectionType) => setSubTaskType(value)} defaultValue="image">
+                <RadioGroup 
+                  value={subTaskType}
+                  onValueChange={(value: ConnectionType) => setSubTaskType(value)}
+                  defaultValue="translation"
+                >
                   <div className="flex space-x-4">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="translation" id="translation" />
@@ -250,12 +259,18 @@ export function TaskCreator() {
           <CardTitle>Task Preview</CardTitle>
         </CardHeader>
         <CardContent>
-          {renderTaskPreview()}
-          <TaskTyping words={[{ id: 1, word: "Hello", translation: "Hola", audioFilePath: "", imageFilePath: "" },
-  { id: 2, word: "Goodbye", translation: "Adios", audioFilePath: "", imageFilePath: "" },
-  { id: 3, word: "Thank you", translation: "Gracias", audioFilePath: "", imageFilePath: "" },
-  { id: 4, word: "Please", translation: "Por favor", audioFilePath: "", imageFilePath: "" },]} questionType={"translation"}></TaskTyping>
-        <TaskConnection></TaskConnection>
+          {taskType === 'typing' && (
+            <TaskTyping
+              words={selectedWords.map(wordId => userWords.find(word => word.id === wordId))}
+              questionType={subTaskType} 
+            />
+         )}
+        {taskType === 'connection' && (
+          <TaskConnection
+            words={selectedWords.map(wordId => userWords.find(word => word.id === wordId))}
+            questionType={subTaskType as ConnectionType}
+          />
+        )}
         </CardContent>
       </Card>
 

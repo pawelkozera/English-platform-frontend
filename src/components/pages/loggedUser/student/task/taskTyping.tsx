@@ -5,15 +5,14 @@ import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 import { Volume2 } from "lucide-react"
 import { Word } from "@/lib/types"
+import { TypingType } from "@/lib/types"
 
-type QuestionType = "translation" | "reverseTranslation" | "image" | "retyping" | "audio"
-
-interface LanguageLearningProps {
+interface TaskTypingProps {
   words: Word[]
-  questionType: QuestionType
+  questionType: TypingType
 }
 
-export function TaskTyping({ words, questionType }: LanguageLearningProps) {
+export function TaskTyping({ words, questionType }: TaskTypingProps) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [userInput, setUserInput] = useState("")
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
@@ -117,9 +116,16 @@ export function TaskTyping({ words, questionType }: LanguageLearningProps) {
 
   return (
     <div className="max-w-md mx-auto bg-background p-8 rounded-xl shadow-lg">
-      <p className="mb-2">Progress: {words.length - availableWords.length} / {words.length}</p>
-      <Progress value={progress} className="mb-6" />
-      {availableWords.length > 0 ? (
+      {words.length !== 0 && (
+        <>
+          <p className="mb-2">Progress: {words.length - availableWords.length} / {words.length}</p>
+          <Progress value={progress} className="mb-6" />
+        </>
+      )}
+      
+      {words.length === 0 ? (
+        <></>
+      ) : availableWords.length > 0 ? (
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex flex-col items-center">
             {renderQuestion()}
