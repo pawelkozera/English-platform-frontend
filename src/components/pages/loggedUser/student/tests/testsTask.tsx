@@ -5,17 +5,53 @@ import { TaskConnection } from '../task/taskConnection'
 import { TaskTypingExam } from '../task/taskTypingExam'
 import { TypingType, ConnectionType, TaskResponse } from '@/lib/types'
 import { Word } from '@/lib/types'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useMutation } from 'react-query'
+import { addTestHistory } from '@/lib/api/testHistory'
 
 interface TestsTaskProps {
   tasks: TaskResponse[]
 }
 
 export function TestsTask({ tasks }: TestsTaskProps) {
+  const navigate = useNavigate();
+  const { testInstanceId } = useParams();
+  const testInstanceIdNumber = Number(testInstanceId);
+
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0)
   const [completedTasks, setCompletedTasks] = useState<boolean[]>(() => {
     const storedCompletedTasks = localStorage.getItem('completedTasks');
     return storedCompletedTasks ? JSON.parse(storedCompletedTasks) : new Array(tasks.length).fill(false);
   });
+
+  const addTestHistoryMutation = useMutation(addTestHistory, {
+    onSuccess: () => {
+      navigate(`/tests`);
+    },
+    onError: (error: unknown) => {
+      console.error("Error completing task:", error);
+    },
+  });
+
+  const onBackButtonEvent = (e: PopStateEvent) => {
+    e.preventDefault();
+    if (window.confirm("If you go back, test will end. \nAre you sure?")) {
+      handleFinish();
+    } else {
+      window.history.pushState("", "", window.location.pathname);
+    }
+  }
+
+  useEffect(() => {
+      window.history.pushState("", "", window.location.pathname);
+
+      window.addEventListener('popstate', onBackButtonEvent);
+
+      return () => {
+          window.removeEventListener('popstate', onBackButtonEvent);  
+      };
+  }, []);
+  
   
   const currentTask = tasks[currentTaskIndex]
   const isLastTask = currentTaskIndex === tasks.length - 1
@@ -51,8 +87,15 @@ export function TestsTask({ tasks }: TestsTaskProps) {
   }
 
   const handleFinish = () => {
-    countScore()
+    const score = countScore()
     removeItemsFromLocalStorage()
+
+    addTestHistoryMutation.mutate(
+      {
+        testInstanceId: testInstanceIdNumber,
+        score: score,
+      }
+    );
   }
 
   const countScore = (): number => {

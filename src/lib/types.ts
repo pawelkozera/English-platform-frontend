@@ -82,6 +82,11 @@ export interface TestInterfaceAdd {
   endTime: string;
 }
 
+export interface TestHistoryAdd {
+  testInstanceId: number;
+  score: number;
+}
+
 export interface WordResponse {
   id: number;
   word: string;

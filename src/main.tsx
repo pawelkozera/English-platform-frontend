@@ -57,7 +57,7 @@ const router = createBrowserRouter([
     element: <Tests />
   },
   {
-    path: "/tests/:testInstanceId",
+    path: "/tests/:testInstanceUUID/:testInstanceId/",
     element: <TestsTasks />
   },
 ]);

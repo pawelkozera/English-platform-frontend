@@ -5,9 +5,13 @@ import { fetchTestInstancesForDisplay } from "@/lib/api/testInstanceApi"
 import { useUser } from "@/components/utils/UserContext"
 import { Pagination } from "@/components/common/pagination"
 import { useNavigate } from 'react-router-dom';
+import { addTestHistory } from "@/lib/api/testHistory"
+import { useMutation } from 'react-query';
+import axios from "axios"
 
 interface TestDisplay {
 	testInstanceId: number
+  testInstanceUUID: string
   testName: string
   activationTime: Date
 	endTime: Date
@@ -18,6 +22,16 @@ export function TestsDisplay() {
   const [page, setPage] = useState(0)
   const pageSize = 25
   const navigate = useNavigate(); 
+
+  const addTestHistoryMutation = useMutation(addTestHistory, {
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error) && error.response?.status === 403) {
+        alert("Access denied: You have exited the test.");
+      } else {
+        console.error("Error completing task:", error);
+      }
+    },
+  });
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["tests", page],
@@ -41,8 +55,18 @@ export function TestsDisplay() {
   if (isLoading) return <div className="flex justify-center items-center h-64">Loading...</div>
   if (error) return <div className="text-center text-red-500">Error loading lessons</div>
 
-  const handleTestClick = (testInstanceId: number) => {
-    navigate(`/tests/${testInstanceId}`);
+  const handleTestClick = (testInstanceId: number, testInstanceUUID: string) => {
+    addTestHistoryMutation.mutate(
+      {
+        testInstanceId: testInstanceId,
+        score: -1,
+      },
+      {
+        onSuccess: () => {
+          navigate(`/tests/${testInstanceUUID}/${testInstanceId}`, { state: { fromNavigate: true } });
+        },
+      }
+    );
   };
 
   return (
@@ -53,7 +77,7 @@ export function TestsDisplay() {
           <Card
             key={test.testInstanceId}
             className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => handleTestClick(test.testInstanceId)}
+            onClick={() => handleTestClick(test.testInstanceId, test.testInstanceUUID)}
           >
             <CardHeader className="pb-2">
               <CardTitle className="text-lg mb-4">{test.testName}</CardTitle>
