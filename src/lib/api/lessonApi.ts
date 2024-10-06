@@ -16,3 +16,13 @@ export const fetchLessonsFromGroup = async (groupId: number): Promise<any> => {
   const response = await apiClient.get(`/api/v1/lesson/all/from/group/${groupId}`);
   return response.data;
 };
+
+export const fetchLessonsForDisplay= async (page: number = 0, size: number = 10): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/lesson/all/for/display`, {
+    params: {
+      page: page,
+      size: size,
+    },
+  });
+  return response.data;
+};
