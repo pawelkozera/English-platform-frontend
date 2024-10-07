@@ -17,8 +17,8 @@ export const fetchLessonsFromGroup = async (groupId: number): Promise<any> => {
   return response.data;
 };
 
-export const fetchLessonsForDisplay= async (page: number = 0, size: number = 10): Promise<any> => {
-  const response = await apiClient.get(`/api/v1/lesson/all/for/display`, {
+export const fetchLessonsForDisplay= async (groupId: number, page: number = 0, size: number = 10): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/lesson/all/for/display/${groupId}`, {
     params: {
       page: page,
       size: size,

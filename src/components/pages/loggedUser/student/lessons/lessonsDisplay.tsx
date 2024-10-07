@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQuery } from "react-query"
 import { Progress } from "@/components/ui/progress"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { fetchLessonsForDisplay } from "@/lib/api/lessonApi"
+import { useUser } from "@/components/utils/UserContext"
 
 interface LessonDisplay {
   lessonId: number
@@ -14,13 +15,25 @@ interface LessonDisplay {
 }
 
 export function LessonsDisplay() {
+  const { selectedGroup } = useUser()
   const [page, setPage] = useState(0)
   const pageSize = 25
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["lessons", page],
-    queryFn: () => fetchLessonsForDisplay(page, pageSize),
+    queryFn: () => { 
+      if (!selectedGroup) return
+      return fetchLessonsForDisplay(selectedGroup.id, page, pageSize)
+    },
+    refetchOnWindowFocus: false,
   })
+
+  useEffect(() => {
+    if (selectedGroup?.id) {
+      setPage(0)
+      refetch()
+    }
+  }, [selectedGroup?.id, refetch])
 
   const lessons: LessonDisplay[] = data?._embedded?.lessonsDisplayResponseList || []
   const totalPages = data?.page?.totalPages || 1
