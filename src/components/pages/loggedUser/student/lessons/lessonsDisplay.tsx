@@ -2,10 +2,9 @@ import { useState, useEffect } from "react"
 import { useQuery } from "react-query"
 import { Progress } from "@/components/ui/progress"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 import { fetchLessonsForDisplay } from "@/lib/api/lessonApi"
 import { useUser } from "@/components/utils/UserContext"
+import { Pagination } from "@/components/common/pagination"
 
 interface LessonDisplay {
   lessonId: number
@@ -69,29 +68,12 @@ export function LessonsDisplay() {
           </Card>
         ))}
       </div>
-      <div className="flex justify-between items-center mt-6">
-        <Button
-          onClick={() => setPage((p) => Math.max(0, p - 1))}
-          disabled={page === 0}
-          variant="outline"
-          size="sm"
-        >
-          <ChevronLeft className="h-4 w-4 mr-2" />
-          Previous
-        </Button>
-        <span className="text-sm text-muted-foreground">
-          Page {page + 1} of {totalPages}
-        </span>
-        <Button
-          onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-          disabled={page >= totalPages - 1}
-          variant="outline"
-          size="sm"
-        >
-          Next
-          <ChevronRight className="h-4 w-4 ml-2" />
-        </Button>
-      </div>
+
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
     </div>
   )
 }

@@ -12,6 +12,7 @@ import { addTask } from "@/lib/api/taskApi";
 import { TaskConnection } from '../../task/taskConnection'
 import { TaskTyping } from '../../task/taskTyping'
 import { TypingType, ConnectionType } from '@/lib/types'
+import { Pagination } from '@/components/common/pagination'
 
 type TaskType = 'typing' | 'connection'
 type LessonResponse = {
@@ -114,20 +115,6 @@ export function TaskCreator() {
       ))}
     </div>
   );  
-
-  const renderPagination = () => (
-    totalPages > 0 && (
-      <div className="flex justify-between items-center mt-4">
-        <Button disabled={currentPage === 0} onClick={() => setCurrentPage(prev => prev - 1)}>
-          Previous
-        </Button>
-        <span>Page {currentPage + 1} of {totalPages}</span>
-        <Button disabled={currentPage === totalPages - 1} onClick={() => setCurrentPage(prev => prev + 1)}>
-          Next
-        </Button>
-      </div>
-    )
-  )
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -250,7 +237,11 @@ export function TaskCreator() {
         </CardHeader>
         <CardContent>
           {renderWordSelection()}
-          {renderPagination()}
+          <Pagination
+            page={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </CardContent>
       </Card>
 
