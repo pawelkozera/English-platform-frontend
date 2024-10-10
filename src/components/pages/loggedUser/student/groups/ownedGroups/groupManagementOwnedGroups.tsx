@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AddLessonToGroup } from './addLessonToGroup'
 import { CreateGroup } from './createGroup'
 
-import { TaskCreator } from "./taskCreator"
+import { TaskCreator } from "./taskCreator/taskCreator"
 import { AddLesson } from "./addLesson"
 import { AddWord } from "./addWord"
 

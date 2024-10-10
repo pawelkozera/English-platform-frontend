@@ -56,5 +56,6 @@ export interface Word {
   imageFilePath: string;
 }
 
+export type TaskType = 'typing' | 'connection'
 export type TypingType = "translation" | "reverseTranslation" | "image" | "retyping" | "audio";
 export type ConnectionType = 'translation' | 'image';
