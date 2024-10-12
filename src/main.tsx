@@ -13,6 +13,7 @@ import { Repetitions } from './components/pages/loggedUser/student/repetitions/r
 import { Groups } from './components/pages/loggedUser/student/groups/groups.tsx';
 import { LanguageGames } from './components/pages/loggedUser/student/languageGames/languageGames.tsx';
 import { Lessons } from './components/pages/loggedUser/student/lessons/lessons.tsx';
+import { LessonTasks } from './components/pages/loggedUser/student/lessons/lessonTasks.tsx';
 import { Profile } from './components/pages/loggedUser/student/profile/profile.tsx';
 import './index.css'
 
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
   {
     path: "/lessons",
     element: <Lessons />
+  },
+  {
+    path: "/lessons/:lessonId",
+    element: <LessonTasks />
   },
   {
     path: "/profile",

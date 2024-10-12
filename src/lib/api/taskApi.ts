@@ -19,3 +19,8 @@ export const addTask = async ({
   });
   return response.data;
 };
+
+export const fetchTaskById= async (taskId: number): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/task/${taskId}`);
+  return response.data;
+};

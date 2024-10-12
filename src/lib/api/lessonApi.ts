@@ -26,3 +26,8 @@ export const fetchLessonsForDisplay= async (groupId: number, page: number = 0, s
   });
   return response.data;
 };
+
+export const fetchTasksForLesson= async (lessonId: number): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/lesson/${lessonId}/tasks`);
+  return response.data;
+};

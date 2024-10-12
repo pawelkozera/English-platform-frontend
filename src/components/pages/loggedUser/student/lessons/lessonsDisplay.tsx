@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { fetchLessonsForDisplay } from "@/lib/api/lessonApi"
 import { useUser } from "@/components/utils/UserContext"
 import { Pagination } from "@/components/common/pagination"
+import { useNavigate } from 'react-router-dom';
 
 interface LessonDisplay {
   lessonId: number
@@ -17,6 +18,7 @@ export function LessonsDisplay() {
   const { selectedGroup } = useUser()
   const [page, setPage] = useState(0)
   const pageSize = 25
+  const navigate = useNavigate(); 
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["lessons", page],
@@ -41,8 +43,8 @@ export function LessonsDisplay() {
   if (error) return <div className="text-center text-red-500">Error loading lessons</div>
 
   const handleLessonClick = (lessonId: number) => {
-    console.log("Lesson clicked:", lessonId)
-  }
+    navigate(`/lessons/${lessonId}`);
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto">
