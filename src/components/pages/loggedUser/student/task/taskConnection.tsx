@@ -9,9 +9,11 @@ const availableColors = ['blue', 'green', 'red', 'purple', 'orange']
 interface TaskConnectionProps {
   words: Word[]
   questionType: ConnectionType
+  onComplete?: () => void
+  isPreview?: boolean 
 }
 
-export function TaskConnection({ words, questionType }: TaskConnectionProps) {
+export function TaskConnection({ words, questionType, onComplete, isPreview = false }: TaskConnectionProps) {
   const [selectedPair, setSelectedPair] = useState<[number, number] | null>(null)
   const [connections, setConnections] = useState<[number, number][]>([])
   const [checkResult, setCheckResult] = useState<boolean | null>(null)
@@ -83,7 +85,20 @@ export function TaskConnection({ words, questionType }: TaskConnectionProps) {
       words[englishIndex].translation === words[translationIndex].translation
     )
     setCheckResult(isCorrect)
-  };  
+
+    if (isCorrect && !isPreview && onComplete) {
+      onComplete()
+      resetTask()
+    }
+  }; 
+  
+  const resetTask = () => {
+    setSelectedPair(null);
+    setConnections([]);
+    setCheckResult(null);
+    setUsedColors([]);
+    setFreeColors([...availableColors]);
+  };
 
   const getBlockColor = (index: number, isEnglish: boolean) => {
     const connectionIndex = connections.findIndex(conn =>

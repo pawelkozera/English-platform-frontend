@@ -10,14 +10,24 @@ import { TypingType } from "@/lib/types"
 interface TaskTypingProps {
   words: Word[]
   questionType: TypingType
+  onComplete?: () => void
+  isPreview?: boolean 
 }
 
-export function TaskTyping({ words, questionType }: TaskTypingProps) {
+export function TaskTyping({ words, questionType, onComplete, isPreview = false }: TaskTypingProps) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [userInput, setUserInput] = useState("")
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
   const [hasSubmitted, setHasSubmitted] = useState(false)
   const [completedWords, setCompletedWords] = useState<number[]>([])
+
+  useEffect(() => {
+    setCurrentWordIndex(0)
+    setCompletedWords([])
+    setUserInput("")
+    setIsCorrect(null)
+    setHasSubmitted(false)
+  }, [words])
 
   const availableWords = words.filter((_, index) => !completedWords.includes(index))
   const progress = ((words.length - availableWords.length) / words.length) * 100
@@ -69,11 +79,12 @@ export function TaskTyping({ words, questionType }: TaskTypingProps) {
       setCompletedWords((prev) => [...prev, words.indexOf(currentWord)])
     }
 
-    if (availableWords.length >= 1) {
-      setCurrentWordIndex((prevIndex) => (prevIndex + 1) % availableWords.length)
+    if (availableWords.length - 1 === 0 && !isPreview && onComplete) {
+      onComplete()
     } else {
-      alert("All words completed!")
+      setCurrentWordIndex((prevIndex) => (prevIndex + 1) % availableWords.length)
     }
+
     setIsCorrect(null)
     setHasSubmitted(false)
   }

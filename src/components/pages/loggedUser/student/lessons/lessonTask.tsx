@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TaskConnection } from '../task/taskConnection'
 import { TaskTyping } from '../task/taskTyping'
 import { TypingType, ConnectionType } from '@/lib/types'
@@ -43,6 +42,11 @@ export function LessonTask({ tasks }: LessonTasksProps) {
     setIsCorrect(null)
   }
 
+  const handleTaskComplete = () => {
+    setIsCorrect(true)
+    handleNextTask()
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const correct = userAnswer.toLowerCase() === currentTask.correctAnswer.toLowerCase()
@@ -81,19 +85,16 @@ export function LessonTask({ tasks }: LessonTasksProps) {
           <TaskTyping
             words={currentTask.words}
             questionType={currentTask.taskSubTypeName as TypingType}
+            onComplete={handleTaskComplete}
           />
         ) : (
           <TaskConnection
             words={currentTask.words}
             questionType={currentTask.taskSubTypeName as ConnectionType}
+            onComplete={handleTaskComplete}
           />
         )}
       </CardContent>
-      <CardFooter>
-        <Button onClick={handleNextTask} disabled={isLastTask || !isCorrect}>
-          Next Task
-        </Button>
-      </CardFooter>
     </Card>
   )
 }

@@ -145,6 +145,7 @@ export function TaskCreator() {
             <TaskTyping
               words={selectedWords.map(wordId => userWords.find(word => word.id === wordId))}
               questionType={subTaskType} 
+              isPreview={true}
             />
          )}
         {taskType === 'connection' && (
