@@ -1,60 +1,73 @@
-import React, { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { TaskConnection } from '../task/taskConnection'
-import { TaskTyping } from '../task/taskTyping'
-import { TypingType, ConnectionType } from '@/lib/types'
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TaskConnection } from '../task/taskConnection';
+import { TaskTyping } from '../task/taskTyping';
+import { TypingType, ConnectionType } from '@/lib/types';
+import { useMutation } from 'react-query';
+import { completeTask } from "@/lib/api/taskApi";
+import { useParams } from 'react-router-dom';
 
 interface WordResponse {
-  id: number
-  word: string
-  translation: string
-  audioFilePath: string
-  imageFilePath: string
+  id: number;
+  word: string;
+  translation: string;
+  audioFilePath: string;
+  imageFilePath: string;
 }
 
 interface TaskResponse {
-  id: number
-  taskTypeName: string
-  taskSubTypeName: string
-  content: string
-  correctAnswer: string
-  words: WordResponse[]
+  id: number;
+  taskTypeName: string;
+  taskSubTypeName: string;
+  content: string;
+  correctAnswer: string;
+  completed: boolean; 
+  words: WordResponse[];
 }
 
 interface LessonTasksProps {
-  tasks: TaskResponse[]
+  tasks: TaskResponse[];
 }
 
 export function LessonTask({ tasks }: LessonTasksProps) {
-  const [currentTaskIndex, setCurrentTaskIndex] = useState(0)
-  const [userAnswer, setUserAnswer] = useState('')
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
+  const { lessonId } = useParams();
+  const lessonIdNumber = Number(lessonId);
+  const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
-  const currentTask = tasks[currentTaskIndex]
-  const isLastTask = currentTaskIndex === tasks.length - 1
+  const currentTask = tasks[currentTaskIndex];
+  const isLastTask = currentTaskIndex === tasks.length - 1;
+
+  const completeTaskMutation = useMutation(completeTask, {
+    onSuccess: () => {
+      setIsCorrect(true);
+      handleNextTask();
+    },
+    onError: (error) => {
+      console.error("Error completing task:", error);
+    },
+  });
 
   const handleNextTask = () => {
     if (isLastTask) {
-      return
+      return;
     }
-    setCurrentTaskIndex(prevIndex => prevIndex + 1)
-    setUserAnswer('')
-    setIsCorrect(null)
-  }
+    setCurrentTaskIndex(prevIndex => prevIndex + 1);
+    setIsCorrect(null);
+  };
 
   const handleTaskComplete = () => {
-    setIsCorrect(true)
-    handleNextTask()
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const correct = userAnswer.toLowerCase() === currentTask.correctAnswer.toLowerCase()
-    setIsCorrect(correct)
-    if (correct && !isLastTask) {
-      setTimeout(handleNextTask, 1500)
+    if (currentTask.completed) {
+      setIsCorrect(true);
+      handleNextTask();
+      return;
     }
-  }
+
+    completeTaskMutation.mutate({
+      lessonId: lessonIdNumber,
+      taskId: currentTask.id,
+    });
+  };
 
   if (isLastTask && isCorrect) {
     return (
@@ -66,7 +79,7 @@ export function LessonTask({ tasks }: LessonTasksProps) {
           <p>Congratulations! You have completed all tasks in this lesson.</p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -96,5 +109,5 @@ export function LessonTask({ tasks }: LessonTasksProps) {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }
