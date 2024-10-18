@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateGroupForm } from "./createGroupForm";
 import { useUser } from '@/components/utils/UserContext';
-import { GroupList } from '../common/groupList';
-import { GroupStatistics } from "../common/groupStatistics";
+import { GroupList } from "../../common/groupList";
+import { GroupStatistics } from "../../common/groupStatistics";
 
 export function CreateGroup() {
   const { groups, selectedGroup, setSelectedGroup } = useUser();

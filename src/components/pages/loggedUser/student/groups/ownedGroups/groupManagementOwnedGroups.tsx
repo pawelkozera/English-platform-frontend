@@ -1,20 +1,21 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AddLessonToGroup } from './addLessonToGroup'
-import { CreateGroup } from './createGroup'
+import { AddLessonToGroup } from './lessons/addLessonToGroup'
+import { CreateGroup } from "./group/createGroup"
 
 import { TaskCreator } from "./taskCreator/taskCreator"
-import { AddLesson } from "./addLesson"
-import { AddWord } from "./addWord"
+import { AddLesson } from "./lessons/addLesson"
+import { AddWord } from "./words/addWord"
 
 export function GroupManagementOwnedGroups() {
   return (
     <Tabs defaultValue="createGroup" className="w-full max-w-4xl mx-auto">
-      <TabsList className="grid w-full grid-cols-5">
+      <TabsList className="grid w-full grid-cols-6">
         <TabsTrigger value="createGroup">Create group</TabsTrigger>
         <TabsTrigger value="addTask">Task creator</TabsTrigger>
         <TabsTrigger value="addWord">Create word</TabsTrigger>
         <TabsTrigger value="addLesson">Create lesson</TabsTrigger>
         <TabsTrigger value="addLessonToGroup">Add lesson to group</TabsTrigger>
+        <TabsTrigger value="createTest">Create test</TabsTrigger>
       </TabsList>
       <TabsContent value="createGroup">
         <CreateGroup />
@@ -29,6 +30,9 @@ export function GroupManagementOwnedGroups() {
         <AddLesson />
       </TabsContent>
       <TabsContent value="addLessonToGroup">
+        <AddLessonToGroup />
+      </TabsContent>
+      <TabsContent value="createTest">
         <AddLessonToGroup />
       </TabsContent>
     </Tabs>

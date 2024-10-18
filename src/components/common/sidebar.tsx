@@ -1,4 +1,4 @@
-import { BookOpen, RepeatIcon, Gamepad2, UserCircle, Users, LogOut } from "lucide-react";
+import { BookOpen, RepeatIcon, Gamepad2, UserCircle, Users, LogOut, BookType } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { useNavigate } from "react-router-dom";
@@ -66,6 +66,10 @@ export function Sidebar() {
                 <Link to={"/lessons"} className="flex items-center px-4 py-4 hover:bg-secondary">
                     <BookOpen className="w-5 h-5 mr-3" />
                     Lessons
+                </Link>
+                <Link to={"/tests"} className="flex items-center px-4 py-4 hover:bg-secondary">
+                    <BookType className="w-5 h-5 mr-3" />
+                    Tests
                 </Link>
                 <Link to={"/repetitions"} className="flex items-center px-4 py-4 hover:bg-secondary">
                     <RepeatIcon className="w-5 h-5 mr-3" />

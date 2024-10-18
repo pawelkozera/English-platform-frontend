@@ -16,6 +16,7 @@ import { Lessons } from './components/pages/loggedUser/student/lessons/lessons.t
 import { LessonTasks } from './components/pages/loggedUser/student/lessons/lessonTasks.tsx';
 import { Profile } from './components/pages/loggedUser/student/profile/profile.tsx';
 import './index.css'
+import { Tests } from './components/pages/loggedUser/student/tests/tests.tsx';
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
   {
     path: "/profile",
     element: <Profile />
+  },
+  {
+    path: "/tests",
+    element: <Tests />
   },
 ]);
 
