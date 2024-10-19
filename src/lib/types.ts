@@ -61,6 +61,14 @@ export interface CompleteTaskParams {
   taskId: number;
 }
 
+export interface Task {
+    id: number;
+    type: TaskType;
+    description: string;
+    words: Word[];
+    questionType: TypingType | ConnectionType;
+}
+
 export type TaskType = 'typing' | 'connection'
 export type TypingType = "translation" | "reverseTranslation" | "image" | "retyping" | "audio";
 export type ConnectionType = 'translation' | 'image';

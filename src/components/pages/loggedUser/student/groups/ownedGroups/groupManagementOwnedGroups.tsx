@@ -5,6 +5,7 @@ import { CreateGroup } from "./group/createGroup"
 import { TaskCreator } from "./taskCreator/taskCreator"
 import { AddLesson } from "./lessons/addLesson"
 import { AddWord } from "./words/addWord"
+import { TestCreator } from "./tests/testCreator"
 
 export function GroupManagementOwnedGroups() {
   return (
@@ -33,7 +34,7 @@ export function GroupManagementOwnedGroups() {
         <AddLessonToGroup />
       </TabsContent>
       <TabsContent value="createTest">
-        <AddLessonToGroup />
+        <TestCreator />
       </TabsContent>
     </Tabs>
   )

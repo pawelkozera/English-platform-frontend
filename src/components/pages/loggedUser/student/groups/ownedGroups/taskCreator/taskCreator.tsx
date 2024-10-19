@@ -29,7 +29,7 @@ export function TaskCreator() {
   const [selectedLesson, setSelectedLesson] = useState<LessonResponse | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const { selectedGroup } = useUser()
 
   const mutation = useMutation(addTask, {
