@@ -41,3 +41,8 @@ export const completeTask = async ({
   });
   return response.data
 };
+
+export const fetchTasksOwnedByUser = async (page: number, size: number): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/task/all/owned/by/user?page=${page}&size=${size}`);
+  return response.data;
+};

@@ -1,30 +1,31 @@
 import { useState } from 'react';
+import { useQuery } from 'react-query';
 import { TaskSelection } from './taskSelection';
-import { Task, Word } from '@/lib/types';
+import { Task } from '@/lib/types';
 import { Pagination } from '@/components/common/pagination';
 import { Button } from "@/components/ui/button";
+import { fetchTasksOwnedByUser } from '@/lib/api/taskApi';
 
 export function TestCreator() {
   const [selectedTasks, setSelectedTasks] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
-  const [totalPages, setTotalPages] = useState(1);
+  const pageSize = 4;
 
-  const words: Word[] = [
-    { id: 1, word: "apple", translation: "jabłko", audioFilePath: "path/to/apple.mp3", imageFilePath: "path/to/apple.jpg" },
-    { id: 2, word: "banana", translation: "banan", audioFilePath: "path/to/banana.mp3", imageFilePath: "path/to/banana.jpg" },
-  ];
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['tasksOwnedByUser', currentPage],
+    queryFn: () => fetchTasksOwnedByUser(currentPage, pageSize),
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
 
-  const userTasks: Task[] = [
-    { id: 1, type: "typing", description: "Translate words", words: [words[0], words[1]], questionType: "translation" },
-    { id: 2, type: "connection", description: "Match words with images", words: [words[0], words[1]], questionType: "image" },
-    { id: 3, type: "connection", description: "Match words with images", words: [words[0], words[1]], questionType: "image" },
-  ];
+  // Update data access based on your API response structure
+  const tasks: Task[] = data?._embedded?.taskResponseList || [];
+  const totalPages = data?.page?.totalPages || 1;
 
   const handleTaskSelect = (taskId: number) => {
-    setSelectedTasks((prevTasks) => 
-      prevTasks.includes(taskId) 
-        ? prevTasks.filter(id => id !== taskId) 
+    setSelectedTasks((prevTasks) =>
+      prevTasks.includes(taskId)
+        ? prevTasks.filter(id => id !== taskId)
         : [...prevTasks, taskId]
     );
   };
@@ -33,12 +34,15 @@ export function TestCreator() {
     console.log('Creating test with tasks:', selectedTasks);
   };
 
+  if (isLoading) return <div className="flex justify-center items-center h-64">Loading...</div>;
+  if (error) return <div className="text-center text-red-500">Error loading tasks</div>;
+
   return (
     <div className="min-h-screen p-4 bg-background text-foreground">
       <h1 className="text-2xl font-bold mb-4">Create a New Test</h1>
-      
+
       <TaskSelection
-        userTasks={userTasks}
+        userTasks={tasks}
         selectedTasks={selectedTasks}
         onTaskSelection={handleTaskSelect}
       />
@@ -46,15 +50,15 @@ export function TestCreator() {
       <Pagination
         page={currentPage}
         totalPages={totalPages}
-        onPageChange={setCurrentPage}
+        onPageChange={(newPage) => setCurrentPage(newPage)}
       />
 
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-2">Selected Tasks:</h2>
         <ul className="list-disc list-inside mb-4">
           {selectedTasks.map((taskId) => {
-            const task = userTasks.find(task => task.id === taskId);
-            return task ? <li key={taskId}>{task.description}</li> : null;
+            const task = tasks.find(task => task.id === taskId);
+            return task ? <li key={taskId}>{task.words.map(word => word.word).join(", ")}</li> : null;
           })}
         </ul>
 
