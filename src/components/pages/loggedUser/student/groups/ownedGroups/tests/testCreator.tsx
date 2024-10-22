@@ -14,11 +14,9 @@ export function TestCreator() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['tasksOwnedByUser', currentPage],
     queryFn: () => fetchTasksOwnedByUser(currentPage, pageSize),
-    keepPreviousData: true,
     refetchOnWindowFocus: false,
   });
 
-  // Update data access based on your API response structure
   const tasks: Task[] = data?._embedded?.taskResponseList || [];
   const totalPages = data?.page?.totalPages || 1;
 
@@ -39,7 +37,10 @@ export function TestCreator() {
 
   return (
     <div className="min-h-screen p-4 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-4">Create a New Test</h1>
+      <h1 className="text-2xl font-bold mb-4">Create a New Test Template</h1>
+
+      <p className='text-lg mb-4'>Name for the test</p>
+      <input type="text" className="rounded-md p-2 mb-4 w-full bg-secondary" placeholder='Test Name'/>
 
       <TaskSelection
         userTasks={tasks}
@@ -54,20 +55,12 @@ export function TestCreator() {
       />
 
       <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-2">Selected Tasks:</h2>
-        <ul className="list-disc list-inside mb-4">
-          {selectedTasks.map((taskId) => {
-            const task = tasks.find(task => task.id === taskId);
-            return task ? <li key={taskId}>{task.words.map(word => word.word).join(", ")}</li> : null;
-          })}
-        </ul>
-
         <Button
           onClick={handleCreateTest}
-          className="mt-4"
+          className="mt-4 text-lg rounded-lg"
           disabled={selectedTasks.length === 0}
         >
-          Create Test
+          Create Test Template
         </Button>
       </div>
     </div>

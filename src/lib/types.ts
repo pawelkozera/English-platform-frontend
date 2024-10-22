@@ -55,7 +55,6 @@ export interface Word {
   audioFilePath: string;
   imageFilePath: string;
 }
-
 export interface CompleteTaskParams {
   lessonId: number;
   taskId: number;
@@ -63,7 +62,8 @@ export interface CompleteTaskParams {
 
 export interface Task {
     id: number;
-    type: TaskType;
+    taskTypeName: TaskType;
+    taskSubTypeName: TypingType | ConnectionType;
     description: string;
     words: Word[];
     questionType: TypingType | ConnectionType;

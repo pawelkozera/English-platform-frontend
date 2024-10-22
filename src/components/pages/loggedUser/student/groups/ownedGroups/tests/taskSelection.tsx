@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TaskConnection } from "../../../task/taskConnection";
-import { TaskTyping } from "../../../task/taskTyping";
+import TaskTypingExam from "../../../task/taskTypingExam";
 import { ConnectionType, TypingType, Task } from "@/lib/types";
 
 interface TaskSelectionProps {
@@ -23,17 +23,17 @@ export function TaskSelection({ userTasks, selectedTasks, onTaskSelection }: Tas
             <h3 className="font-semibold mb-2">{task.description}</h3>
 
             <div className="overflow-y-auto mb-4">
-              {task.type === "typing" ? (
-                <TaskTyping
+              {task.taskTypeName === "typing" ? (
+                <TaskTypingExam
                   words={task.words}
-                  questionType={task.questionType as TypingType}
+                  questionType={task.taskSubTypeName as TypingType}
                   isPreview={true}
                 />
               ) : (
                 <TaskConnection
                   words={task.words}
-                  questionType={task.questionType as ConnectionType}
-                  isPreview={true}
+                  questionType={task.taskSubTypeName as ConnectionType}
+                  isExam={true}
                 />
               )}
             </div>

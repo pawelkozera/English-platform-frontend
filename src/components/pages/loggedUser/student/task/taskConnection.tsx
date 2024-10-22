@@ -11,9 +11,11 @@ interface TaskConnectionProps {
   questionType: ConnectionType
   onComplete?: () => void
   isPreview?: boolean 
+  isExam?: boolean
+  onCompleteExam?: (score: number) => void
 }
 
-export function TaskConnection({ words, questionType, onComplete, isPreview = false }: TaskConnectionProps) {
+export function TaskConnection({ words, questionType, onComplete, isPreview = false, isExam = false, onCompleteExam }: TaskConnectionProps) {
   const [selectedPair, setSelectedPair] = useState<[number, number] | null>(null)
   const [connections, setConnections] = useState<[number, number][]>([])
   const [checkResult, setCheckResult] = useState<boolean | null>(null)
@@ -77,6 +79,10 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
 
   const checkAnswers = () => {
     if (connections.length !== words.length) {
+      if (isExam) {
+        return onCompleteExam?.(0);
+      }
+
       setCheckResult(false);
       return;
     }
@@ -86,8 +92,12 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
     )
     setCheckResult(isCorrect)
 
-    if (isCorrect && !isPreview && onComplete) {
-      onComplete()
+    if (isCorrect && !isPreview) {
+      if (isExam && onCompleteExam) {
+        onCompleteExam(connections.length)
+      } else if (onComplete) {
+        onComplete()
+      }
       resetTask()
     }
   }; 
@@ -159,12 +169,18 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
       <div className="mt-6 text-center">
         {words.length !== 0 && (
           <>
-            <Button onClick={checkAnswers} className="px-6 py-2">
-              Check Answers
-            </Button>
+            {isExam ? (
+              <Button onClick={checkAnswers} className="px-6 py-2">
+                Submit Answers
+              </Button>
+            ) : (
+              <Button onClick={checkAnswers} className="px-6 py-2">
+                Check Answers
+              </Button>
+            )}
           </>
         )}
-        {(checkResult !== null && words.length !== 0) && (
+        {(checkResult !== null && words.length !== 0 && !isExam) && (
           <div className="mt-4 flex items-center justify-center">
             {checkResult ? (
               <>
