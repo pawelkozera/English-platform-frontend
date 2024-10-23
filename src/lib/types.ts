@@ -69,6 +69,11 @@ export interface Task {
     questionType: TypingType | ConnectionType;
 }
 
+export interface TestTemplateAdd {
+  name: string;
+  tasksIds: number[];
+}
+
 export type TaskType = 'typing' | 'connection'
 export type TypingType = "translation" | "reverseTranslation" | "image" | "retyping" | "audio";
 export type ConnectionType = 'translation' | 'image';

@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 import { TaskSelection } from './taskSelection';
 import { Task } from '@/lib/types';
 import { Pagination } from '@/components/common/pagination';
 import { Button } from "@/components/ui/button";
 import { fetchTasksOwnedByUser } from '@/lib/api/taskApi';
+import { addTask } from '@/lib/api/testTemplateApi';
 
 export function TestCreator() {
   const [selectedTasks, setSelectedTasks] = useState<number[]>([]);
+  const [testName, setTestName] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 4;
 
@@ -29,8 +31,22 @@ export function TestCreator() {
   };
 
   const handleCreateTest = () => {
-    console.log('Creating test with tasks:', selectedTasks);
+    if (!testName || selectedTasks.length === 0) return;
+
+    mutation.mutate({
+      name: testName,
+      tasksIds: selectedTasks,
+    });
   };
+
+  const mutation = useMutation(addTask, {
+    onSuccess: (data) => {
+      console.log("Test template created successfully", data);
+    },
+    onError: (error) => {
+      console.error("Error during test template creation", error);
+    },
+  });
 
   if (isLoading) return <div className="flex justify-center items-center h-64">Loading...</div>;
   if (error) return <div className="text-center text-red-500">Error loading tasks</div>;
@@ -40,7 +56,13 @@ export function TestCreator() {
       <h1 className="text-2xl font-bold mb-4">Create a New Test Template</h1>
 
       <p className='text-lg mb-4'>Name for the test</p>
-      <input type="text" className="rounded-md p-2 mb-4 w-full bg-secondary" placeholder='Test Name'/>
+      <input 
+        type="text" 
+        className="rounded-md p-2 mb-4 w-full bg-secondary" 
+        placeholder='Test Name' 
+        value={testName}
+        onChange={(e) => setTestName(e.target.value)}
+      />
 
       <TaskSelection
         userTasks={tasks}
@@ -58,7 +80,7 @@ export function TestCreator() {
         <Button
           onClick={handleCreateTest}
           className="mt-4 text-lg rounded-lg"
-          disabled={selectedTasks.length === 0}
+          disabled={selectedTasks.length === 0 || !testName}
         >
           Create Test Template
         </Button>
