@@ -1,7 +1,7 @@
 import apiClient from "@/interceptor/axios-interceptor";
 import { TestTemplateAdd } from "../types";
 
-export const addTask = async ({
+export const addTestTemplate = async ({
     name,
     tasksIds
   }: TestTemplateAdd): Promise<any> => {
@@ -10,4 +10,9 @@ export const addTask = async ({
       tasksIds
     });
     return response.data;
+};
+
+export const fetchTestTemplatesOwnedByUser = async (page: number, size: number): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/test/template/all/owned/by/user?page=${page}&size=${size}`);
+  return response.data;
 };

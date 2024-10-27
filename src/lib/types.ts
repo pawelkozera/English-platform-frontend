@@ -74,6 +74,31 @@ export interface TestTemplateAdd {
   tasksIds: number[];
 }
 
+export interface TestInterfaceAdd {
+  testTemplateId: number;
+  groupId: number;
+  activationTime: string;
+  endTime: string;
+}
+
+export interface WordResponse {
+  id: number;
+  word: string;
+  translation: string;
+  audioFilePath: string;
+  imageFilePath: string;
+}
+
+export interface TaskResponse {
+  id: number;
+  taskTypeName: string;
+  taskSubTypeName: string;
+  content: string;
+  correctAnswer: string;
+  completed: boolean; 
+  words: WordResponse[];
+}
+
 export type TaskType = 'typing' | 'connection'
 export type TypingType = "translation" | "reverseTranslation" | "image" | "retyping" | "audio";
 export type ConnectionType = 'translation' | 'image';

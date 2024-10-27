@@ -2,28 +2,11 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TaskConnection } from '../task/taskConnection';
 import { TaskTyping } from '../task/taskTyping';
-import { TypingType, ConnectionType } from '@/lib/types';
+import { TypingType, ConnectionType, TaskResponse } from '@/lib/types';
 import { useMutation } from 'react-query';
 import { completeTask } from "@/lib/api/taskApi";
 import { useParams } from 'react-router-dom';
 
-interface WordResponse {
-  id: number;
-  word: string;
-  translation: string;
-  audioFilePath: string;
-  imageFilePath: string;
-}
-
-interface TaskResponse {
-  id: number;
-  taskTypeName: string;
-  taskSubTypeName: string;
-  content: string;
-  correctAnswer: string;
-  completed: boolean; 
-  words: WordResponse[];
-}
 
 interface LessonTasksProps {
   tasks: TaskResponse[];

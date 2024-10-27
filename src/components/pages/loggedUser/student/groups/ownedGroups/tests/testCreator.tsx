@@ -5,7 +5,7 @@ import { Task } from '@/lib/types';
 import { Pagination } from '@/components/common/pagination';
 import { Button } from "@/components/ui/button";
 import { fetchTasksOwnedByUser } from '@/lib/api/taskApi';
-import { addTask } from '@/lib/api/testTemplateApi';
+import { addTestTemplate } from '@/lib/api/testTemplateApi';
 
 export function TestCreator() {
   const [selectedTasks, setSelectedTasks] = useState<number[]>([]);
@@ -39,7 +39,7 @@ export function TestCreator() {
     });
   };
 
-  const mutation = useMutation(addTask, {
+  const mutation = useMutation(addTestTemplate, {
     onSuccess: (data) => {
       console.log("Test template created successfully", data);
     },
