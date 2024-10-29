@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation } from 'react-query'
 import { fetchTestTemplatesOwnedByUser } from '@/lib/api/testTemplateApi'
-import { launchTest } from '@/lib/api/testInterfaceApi'
+import { launchTest } from '@/lib/api/testInstanceApi'
 import { useUser } from '@/components/utils/UserContext'
 import { TaskResponse } from '@/lib/types'
 import { Button } from "@/components/ui/button"
