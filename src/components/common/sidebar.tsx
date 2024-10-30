@@ -8,24 +8,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useEffect } from "react";
 
 export function Sidebar() {
-    const navigate = useNavigate();
-    const { logout, groups, selectedGroup, setSelectedGroup } = useUser();
+	const navigate = useNavigate();
+	const { logout, groups, selectedGroup, setSelectedGroup } = useUser();
 
-    useEffect(() => {
-        if (groups.length > 0 && !selectedGroup) {
-            setSelectedGroup(groups[0]);
-        }
-    }, [groups, selectedGroup, setSelectedGroup]);
+	useEffect(() => {
+			if (groups.length > 0 && !selectedGroup) {
+					setSelectedGroup(groups[0]);
+			}
+	}, [groups, selectedGroup, setSelectedGroup]);
 
-    const handleLogout = async () => {
-        try {
-          await apiClient.post('/api/v1/auth/logout');
-          logout();
-          navigate('/');
-        } catch (error) {
-          console.error('Logout failed', error);
-        }
-    };    
+	const handleLogout = async () => {
+			try {
+				await apiClient.post('/api/v1/auth/logout');
+				logout();
+				navigate('/');
+			} catch (error) {
+				console.error('Logout failed', error);
+				navigate('/');
+			}
+	};    
 
   return (
     <aside className="w-64 shadow-md">

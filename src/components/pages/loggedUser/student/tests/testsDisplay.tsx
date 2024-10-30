@@ -42,7 +42,7 @@ export function TestsDisplay() {
   if (error) return <div className="text-center text-red-500">Error loading lessons</div>
 
   const handleTestClick = (testInstanceId: number) => {
-    //navigate(`/tests/${testInstanceId}`);
+    navigate(`/tests/${testInstanceId}`);
   };
 
   return (

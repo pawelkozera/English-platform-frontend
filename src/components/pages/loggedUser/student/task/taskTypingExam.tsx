@@ -9,73 +9,108 @@ interface TaskTypingProps {
   questionType: TypingType
   onComplete?: () => void
   isPreview?: boolean 
+  taskId?: number
 }
 
-export default function TaskTypingExam({ words, questionType, onComplete, isPreview = false }: TaskTypingProps) {
-  const [userInputs, setUserInputs] = useState<string[]>(Array(words.length).fill(''))
-  const inputRefs = useRef<HTMLInputElement[]>([])
+export function TaskTypingExam({ words, questionType, onComplete, isPreview = false, taskId }: TaskTypingProps) {
+  const [storageKey, setStorageKey] = useState<string>(() => {
+    if (taskId) {
+      return `task-${String(taskId)}`
+    }
+    return ''
+  });
+  
+  const [userInputs, setUserInputs] = useState<string[]>(() => {
+    return Array(words.length).fill('');
+  });
+
+  const inputRefs = useRef<HTMLInputElement[]>([]);
 
   useEffect(() => {
-    if (inputRefs.current[0]) {
-      inputRefs.current[0].focus()
+    const newStorageKey = taskId ? `task-${String(taskId)}` : '';
+    setStorageKey(newStorageKey);
+  
+    if (newStorageKey) {
+      const savedInputs = localStorage.getItem(newStorageKey);
+  
+      if (savedInputs && Array.isArray(JSON.parse(savedInputs))) {
+        setUserInputs(JSON.parse(savedInputs));
+      } else {
+        setUserInputs(Array(words.length).fill(''));
+      }
+    } else {
+      setUserInputs(Array(words.length).fill(''));
     }
-  }, [])
+  
+    if (inputRefs.current[0]) {
+      inputRefs.current[0].focus();
+    }
+  }, [words, taskId]);
 
   const handleChange = (index: number, value: string) => {
-    const newInputs = [...userInputs]
-    newInputs[index] = value
-    setUserInputs(newInputs)
-  }
+    if (Array.isArray(userInputs)) {
+      const newInputs = [...userInputs];
+      newInputs[index] = value;
+      setUserInputs(newInputs);
+  
+      if (storageKey) {
+        localStorage.setItem(storageKey, JSON.stringify(newInputs));
+      }
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     const results = words.map((word, index) => {
-      const userInput = userInputs[index].toLowerCase().trim()
-      let correct = false
+      const userInput = userInputs[index].toLowerCase().trim();
+      let correct = false;
 
       switch (questionType) {
         case "translation":
-          correct = userInput === word.translation.toLowerCase().trim()
-          break
+          correct = userInput === word.translation.toLowerCase().trim();
+          break;
         case "reverseTranslation":
-          correct = userInput === word.word.toLowerCase().trim()
-          break
+          correct = userInput === word.word.toLowerCase().trim();
+          break;
         case "image":
         case "audio":
         case "retyping":
-          correct = userInput === word.word.toLowerCase().trim()
-          break
+          correct = userInput === word.word.toLowerCase().trim();
+          break;
       }
-      return { word, correct }
-    })
+      return { word, correct };
+    });
 
-    console.log(results)
-    if (onComplete) onComplete()
-  }
+    console.log(results);
+    if (onComplete) {
+      setUserInputs(Array(words.length).fill(''));
+      onComplete();
+    }
+  };
 
   const renderQuestion = (word: Word, index: number) => {
     switch (questionType) {
       case "translation":
-        return <p className="text-lg font-semibold mb-2">Translate: {word.word}</p>
+        return <p className="text-lg font-semibold mb-2">Translate: {word.word}</p>;
       case "reverseTranslation":
-        return <p className="text-lg font-semibold mb-2">What's the original word for: {word.translation}</p>
+        return <p className="text-lg font-semibold mb-2">What's the original word for: {word.translation}</p>;
       case "image":
         return (
           <div className="mb-2">
             <p className="text-lg font-semibold mb-2">What's in this image?</p>
             <img src={word.imageFilePath} alt="Question image" width={200} height={200} className="rounded-md" />
           </div>
-        )
+        );
       case "audio":
         return (
           <div className="mb-2">
             <p className="text-lg font-semibold mb-2">What word do you hear?</p>
           </div>
-        )
+        );
       case "retyping":
-        return <p className="text-lg font-semibold mb-2">Retype: {word.word}</p>
+        return <p className="text-lg font-semibold mb-2">Retype: {word.word}</p>;
     }
-  }
+  };
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -103,5 +138,5 @@ export default function TaskTypingExam({ words, questionType, onComplete, isPrev
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }

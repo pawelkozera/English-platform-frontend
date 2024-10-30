@@ -78,11 +78,11 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
   }  
 
   const checkAnswers = () => {
+    if (isExam && onComplete) {
+      onComplete()
+    }
+    
     if (connections.length !== words.length) {
-      if (isExam) {
-        return onCompleteExam?.(0);
-      }
-
       setCheckResult(false);
       return;
     }
@@ -129,16 +129,29 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex justify-between mb-8">
         <div className="w-1/2 pr-4">
-          {words.map((word, index) => (
-            <div
-              key={`english-${index}`}
-              className="mb-4 p-3 border rounded cursor-pointer text-center"
-              style={{ backgroundColor: getBlockColor(index, true) }}
-              onClick={() => handleBlockClick(index, true)}
-            >
-              {word.word}
-            </div>
-          ))}
+          {questionType === 'translation' ? (
+            words.map((word, index) => (
+              <div
+                key={`english-${index}`}
+                className="mb-4 p-3 border rounded cursor-pointer text-center"
+                style={{ backgroundColor: getBlockColor(index, true) }}
+                onClick={() => handleBlockClick(index, true)}
+              >
+                {word.word}
+              </div>
+            ))
+          ) : (
+            words.map((word, index) => (
+              <div
+                key={`english-${index}`}
+                className="mb-4 p-3 border rounded cursor-pointer text-center"
+                style={{ backgroundColor: getBlockColor(index, true) }}
+                onClick={() => handleBlockClick(index, true)}
+              >
+                {word.translation}
+              </div>
+            ))
+          )}
         </div>
         <div className="w-1/2 pl-4">
           {questionType === 'translation' ? (

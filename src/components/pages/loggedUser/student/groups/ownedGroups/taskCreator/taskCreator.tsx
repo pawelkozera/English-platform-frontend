@@ -152,6 +152,7 @@ export function TaskCreator() {
           <TaskConnection
             words={selectedWords.map(wordId => userWords.find(word => word.id === wordId))}
             questionType={subTaskType as ConnectionType}
+            isPreview={true}
           />
         )}
         </CardContent>

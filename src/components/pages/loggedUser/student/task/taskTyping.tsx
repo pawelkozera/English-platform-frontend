@@ -58,14 +58,12 @@ export function TaskTyping({ words, questionType, onComplete, isPreview = false 
 
     switch (questionType) {
       case "translation":
-        correct = userInput.toLowerCase().trim() === currentWord.translation.toLowerCase().trim()
-        break
-      case "reverseTranslation":
-        correct = userInput.toLowerCase().trim() === currentWord.word.toLowerCase().trim()
-        break
       case "image":
       case "audio":
       case "retyping":
+        correct = userInput.toLowerCase().trim() === currentWord.translation.toLowerCase().trim()
+        break
+      case "reverseTranslation":
         correct = userInput.toLowerCase().trim() === currentWord.word.toLowerCase().trim()
         break
     }
@@ -106,7 +104,7 @@ export function TaskTyping({ words, questionType, onComplete, isPreview = false 
           />
         )
       case "retyping":
-        return <p className="text-2xl font-semibold mb-4">{currentWord.word}</p>
+        return <p className="text-2xl font-semibold mb-4">{currentWord.translation}</p>
       case "audio":
         return (
           <Button

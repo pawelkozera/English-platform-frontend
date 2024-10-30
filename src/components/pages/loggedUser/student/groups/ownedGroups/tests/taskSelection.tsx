@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TaskConnection } from "../../../task/taskConnection";
-import TaskTypingExam from "../../../task/taskTypingExam";
+import { TaskTypingExam } from "../../../task/taskTypingExam";
 import { ConnectionType, TypingType, Task } from "@/lib/types";
 
 interface TaskSelectionProps {
