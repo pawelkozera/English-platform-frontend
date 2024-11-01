@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { CheckCircle, XCircle } from 'lucide-react'
 import { Word } from '@/lib/types';
@@ -13,14 +13,58 @@ interface TaskConnectionProps {
   isPreview?: boolean 
   isExam?: boolean
   onCompleteExam?: (score: number) => void
+  taskId?: number
 }
 
-export function TaskConnection({ words, questionType, onComplete, isPreview = false, isExam = false, onCompleteExam }: TaskConnectionProps) {
+export function TaskConnection({ words, questionType, onComplete, isPreview = false, isExam = false, onCompleteExam, taskId }: TaskConnectionProps) {
   const [selectedPair, setSelectedPair] = useState<[number, number] | null>(null)
   const [connections, setConnections] = useState<[number, number][]>([])
   const [checkResult, setCheckResult] = useState<boolean | null>(null)
   const [usedColors, setUsedColors] = useState<string[]>([])
   const [freeColors, setFreeColors] = useState<string[]>([...availableColors])
+
+  const [dataWasLoaded, setDataWasLoaded] = useState(false);
+  const [storageKey, setStorageKey] = useState<string>(() => {
+    if (taskId) {
+      return `task-${String(taskId)}`
+    }
+    return ''
+  });
+
+  useEffect(() => {
+    if (storageKey) {
+      const newStorageKey = taskId ? `task-${String(taskId)}` : '';
+      setStorageKey(newStorageKey);
+    
+      if (newStorageKey) {
+        const savedState = localStorage.getItem(newStorageKey);
+
+        if (savedState) {
+          const { connections, selectedPair, usedColors, freeColors } = JSON.parse(savedState);
+          console.log("load", connections, selectedPair, usedColors, freeColors);
+          setConnections(connections);
+          setSelectedPair(selectedPair);
+          setUsedColors(usedColors);
+          setFreeColors(freeColors);
+        }
+      }
+
+      setDataWasLoaded(true)
+    }
+  }, [taskId]);
+
+  useEffect(() => {
+    if (storageKey && dataWasLoaded) {
+      const stateToSave = {
+        connections,
+        selectedPair,
+        usedColors,
+        freeColors
+      };
+      localStorage.setItem(storageKey, JSON.stringify(stateToSave));
+      console.log("save", stateToSave);
+    }
+  }, [connections, selectedPair, usedColors, freeColors, storageKey]);
 
   const handleBlockClick = (index: number, isEnglish: boolean) => {
     const connectionIndex = connections.findIndex(conn =>
@@ -51,7 +95,7 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
           setFreeColors(freeColors.filter(color => color !== removedColor));
         }
       }
-  
+      
       setSelectedPair(null);
     } else {
       if (selectedPair === null) {

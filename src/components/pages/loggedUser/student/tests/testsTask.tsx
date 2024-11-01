@@ -70,6 +70,7 @@ export function TestsTask({ tasks }: TestsTaskProps) {
               questionType={currentTask.taskSubTypeName as ConnectionType}
               onComplete={handleTaskComplete}
               isExam={true}
+              taskId={currentTask.id}
             />
           )}
 

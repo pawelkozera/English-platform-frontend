@@ -45,7 +45,7 @@ export function TaskTypingExam({ words, questionType, onComplete, isPreview = fa
     if (inputRefs.current[0]) {
       inputRefs.current[0].focus();
     }
-  }, [words, taskId]);
+  }, [taskId]);
 
   const handleChange = (index: number, value: string) => {
     if (Array.isArray(userInputs)) {
