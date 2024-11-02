@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { TaskConnection } from '../task/taskConnection'
@@ -11,18 +11,31 @@ interface TestsTaskProps {
 
 export function TestsTask({ tasks }: TestsTaskProps) {
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0)
-  const [completedTasks, setCompletedTasks] = useState<boolean[]>(new Array(tasks.length).fill(false))
+  const [completedTasks, setCompletedTasks] = useState<boolean[]>(() => {
+    const storedCompletedTasks = localStorage.getItem('completedTasks');
+    return storedCompletedTasks ? JSON.parse(storedCompletedTasks) : new Array(tasks.length).fill(false);
+  });
   
   const currentTask = tasks[currentTaskIndex]
   const isLastTask = currentTaskIndex === tasks.length - 1
 
+  useEffect(() => {
+    localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
+  }, [completedTasks]);
+
   const handleTaskComplete = () => {  
-    const newCompletedTasks = [...completedTasks];
-    newCompletedTasks[currentTaskIndex] = true;
-    setCompletedTasks(newCompletedTasks);
+    handleMarkAsDone();
   
     if (!isLastTask) {
       setCurrentTaskIndex(currentTaskIndex + 1);
+    }
+  }
+
+  const handleMarkAsDone = () => {
+    if (!completedTasks[currentTaskIndex]) {
+      const newCompletedTasks = [...completedTasks];
+      newCompletedTasks[currentTaskIndex] = true;
+      setCompletedTasks(newCompletedTasks);
     }
   }
 
@@ -31,6 +44,7 @@ export function TestsTask({ tasks }: TestsTaskProps) {
     tasks.forEach(task => {
       localStorage.removeItem(`task-${task.id}`);
     });
+    localStorage.removeItem('completedTasks');
   }
 
   const navigateToTask = (index: number) => {
@@ -63,6 +77,7 @@ export function TestsTask({ tasks }: TestsTaskProps) {
               questionType={currentTask.taskSubTypeName as TypingType}
               onComplete={handleTaskComplete}
               taskId={currentTask.id}
+              onMarkAsDone={handleMarkAsDone}
             />
           ) : (
             <TaskConnection
@@ -71,6 +86,7 @@ export function TestsTask({ tasks }: TestsTaskProps) {
               onComplete={handleTaskComplete}
               isExam={true}
               taskId={currentTask.id}
+              onMarkAsDone={handleMarkAsDone}
             />
           )}
 

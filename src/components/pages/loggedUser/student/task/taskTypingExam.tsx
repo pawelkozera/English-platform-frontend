@@ -8,11 +8,12 @@ interface TaskTypingProps {
   words: Word[]
   questionType: TypingType
   onComplete?: () => void
+  onMarkAsDone?: () => void
   isPreview?: boolean 
   taskId?: number
 }
 
-export function TaskTypingExam({ words, questionType, onComplete, isPreview = false, taskId }: TaskTypingProps) {
+export function TaskTypingExam({ words, questionType, onComplete, onMarkAsDone, isPreview = false, taskId }: TaskTypingProps) {
   const [storageKey, setStorageKey] = useState<string>(() => {
     if (taskId) {
       return `task-${String(taskId)}`
@@ -52,6 +53,10 @@ export function TaskTypingExam({ words, questionType, onComplete, isPreview = fa
       const newInputs = [...userInputs];
       newInputs[index] = value;
       setUserInputs(newInputs);
+
+      if (onMarkAsDone) {
+        onMarkAsDone();
+      }
   
       if (storageKey) {
         localStorage.setItem(storageKey, JSON.stringify(newInputs));

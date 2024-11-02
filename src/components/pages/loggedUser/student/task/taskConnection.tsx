@@ -13,10 +13,11 @@ interface TaskConnectionProps {
   isPreview?: boolean 
   isExam?: boolean
   onCompleteExam?: (score: number) => void
+  onMarkAsDone?: () => void
   taskId?: number
 }
 
-export function TaskConnection({ words, questionType, onComplete, isPreview = false, isExam = false, onCompleteExam, taskId }: TaskConnectionProps) {
+export function TaskConnection({ words, questionType, onComplete, isPreview = false, isExam = false, onCompleteExam, onMarkAsDone, taskId }: TaskConnectionProps) {
   const [selectedPair, setSelectedPair] = useState<[number, number] | null>(null)
   const [connections, setConnections] = useState<[number, number][]>([])
   const [checkResult, setCheckResult] = useState<boolean | null>(null)
@@ -41,7 +42,6 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
 
         if (savedState) {
           const { connections, selectedPair, usedColors, freeColors } = JSON.parse(savedState);
-          console.log("load", connections, selectedPair, usedColors, freeColors);
           setConnections(connections);
           setSelectedPair(selectedPair);
           setUsedColors(usedColors);
@@ -62,7 +62,10 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
         freeColors
       };
       localStorage.setItem(storageKey, JSON.stringify(stateToSave));
-      console.log("save", stateToSave);
+
+      if (onMarkAsDone) {
+        onMarkAsDone();
+      }
     }
   }, [connections, selectedPair, usedColors, freeColors, storageKey]);
 
