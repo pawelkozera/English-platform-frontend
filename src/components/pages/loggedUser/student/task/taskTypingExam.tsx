@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Word, TypingType } from '@/lib/types'
@@ -137,9 +136,6 @@ export function TaskTypingExam({ words, questionType, onComplete, onMarkAsDone, 
               />
             </div>
           ))}
-          <Button type="submit" className="w-full mt-4">
-            Submit Answers
-          </Button>
         </form>
       </CardContent>
     </Card>

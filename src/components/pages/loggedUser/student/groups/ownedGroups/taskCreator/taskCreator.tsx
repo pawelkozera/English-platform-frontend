@@ -27,6 +27,7 @@ export function TaskCreator() {
   const [subTaskType, setSubTaskType] = useState<TypingType | ConnectionType>('translation')
   const [selectedWords, setSelectedWords] = useState<number[]>([])
   const [selectedLesson, setSelectedLesson] = useState<LessonResponse | null>(null);
+  const [testScore, setTestScore] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const [totalPages, setTotalPages] = useState(1);
@@ -52,7 +53,8 @@ export function TaskCreator() {
       content: "",
       correctAnswer: "",
       lessonId: selectedLesson.lessonId,
-      wordIds: selectedWords
+      wordIds: selectedWords,
+      score: testScore
     });
   };
 
@@ -155,6 +157,26 @@ export function TaskCreator() {
             isPreview={true}
           />
         )}
+        </CardContent>
+      </Card>
+
+      <Card className="mt-4">
+        <CardHeader>
+          <p className='text-lg mb-4'>Score for this task {`(for exams)`}</p>
+        </CardHeader>
+        <CardContent>
+          <input 
+            type="number" 
+            className="rounded-md p-2 mb-4 w-full bg-secondary" 
+            placeholder='Test Score' 
+            value={testScore}
+            min={0} 
+            max={100} 
+            onChange={(e) => {
+              const value = Math.max(0, Math.min(100, Number(e.target.value)));
+              setTestScore(value);
+            }}
+          />
         </CardContent>
       </Card>
 

@@ -7,7 +7,8 @@ export const addTask = async ({
   content,
   correctAnswer,
   lessonId,
-  wordIds
+  wordIds,
+  score
 }: TaskAdd): Promise<any> => {
   const response = await apiClient.post('/api/v1/task/add', {
     taskTypeName,
@@ -15,7 +16,8 @@ export const addTask = async ({
     content,
     correctAnswer,
     lessonId,
-    wordIds
+    wordIds,
+    score
   });
   return response.data;
 };

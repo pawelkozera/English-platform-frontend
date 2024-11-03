@@ -32,6 +32,18 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
     return ''
   });
 
+  const [questions, setQuestions] = useState<Word[]>([]);
+  const [answers, setAnswers] = useState<Word[]>([]);
+
+  const shuffleArray = ((array: Word[]) => {
+    return array.slice().sort(() => Math.random() - 0.5);
+  })
+
+  useEffect(() => {
+    setQuestions(shuffleArray(words));
+    setAnswers(shuffleArray(words));
+  }, [words]);
+
   useEffect(() => {
     if (storageKey) {
       const newStorageKey = taskId ? `task-${String(taskId)}` : '';
@@ -41,11 +53,29 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
         const savedState = localStorage.getItem(newStorageKey);
 
         if (savedState) {
-          const { connections, selectedPair, usedColors, freeColors } = JSON.parse(savedState);
+          const { connections, selectedPair, usedColors, freeColors, questions, answers } = JSON.parse(savedState);
           setConnections(connections);
           setSelectedPair(selectedPair);
           setUsedColors(usedColors);
           setFreeColors(freeColors);
+          setQuestions(questions);
+          setAnswers(answers);
+        } 
+        else {
+          const shuffledQuestions = shuffleArray(words);
+          const shuffledAnswers = shuffleArray(words);
+          setQuestions(shuffledQuestions);
+          setAnswers(shuffledAnswers);
+          
+          const stateToSave = {
+            connections,
+            selectedPair,
+            usedColors,
+            freeColors,
+            questions: shuffledQuestions,
+            answers: shuffledAnswers
+          };
+          localStorage.setItem(storageKey, JSON.stringify(stateToSave));
         }
       }
 
@@ -59,11 +89,13 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
         connections,
         selectedPair,
         usedColors,
-        freeColors
+        freeColors,
+        questions,
+        answers
       };
       localStorage.setItem(storageKey, JSON.stringify(stateToSave));
 
-      if (onMarkAsDone) {
+      if (onMarkAsDone && connections.length > 0) {
         onMarkAsDone();
       }
     }
@@ -126,28 +158,30 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
 
   const checkAnswers = () => {
     if (isExam && onComplete) {
-      onComplete()
+      onComplete();
     }
-    
+  
     if (connections.length !== words.length) {
       setCheckResult(false);
       return;
     }
   
-    const isCorrect = connections.every(([englishIndex, translationIndex]) =>
-      words[englishIndex].translation === words[translationIndex].translation
-    )
-    setCheckResult(isCorrect)
-
+    const isCorrect = connections.every(([questionIndex, answerIndex]) =>
+      questions[questionIndex].translation === answers[answerIndex].translation
+    );
+  
+    setCheckResult(isCorrect);
+  
     if (isCorrect && !isPreview) {
       if (isExam && onCompleteExam) {
-        onCompleteExam(connections.length)
+        onCompleteExam(connections.length);
       } else if (onComplete) {
-        onComplete()
+        onComplete();
       }
-      resetTask()
+      resetTask();
     }
-  }; 
+  };
+  
   
   const resetTask = () => {
     setSelectedPair(null);
@@ -175,9 +209,9 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex justify-between mb-8">
-        <div className="w-1/2 pr-4">
+      <div className="w-1/2 pr-4">
           {questionType === 'translation' ? (
-            words.map((word, index) => (
+            questions.map((word, index) => (
               <div
                 key={`english-${index}`}
                 className="mb-4 p-3 border rounded cursor-pointer text-center"
@@ -188,7 +222,7 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
               </div>
             ))
           ) : (
-            words.map((word, index) => (
+            questions.map((word, index) => (
               <div
                 key={`english-${index}`}
                 className="mb-4 p-3 border rounded cursor-pointer text-center"
@@ -200,9 +234,10 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
             ))
           )}
         </div>
+
         <div className="w-1/2 pl-4">
           {questionType === 'translation' ? (
-            words.map((word, index) => (
+            answers.map((word, index) => (
               <div
                 key={`translation-${index}`}
                 className="mb-4 p-3 border rounded cursor-pointer text-center"
@@ -213,7 +248,7 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
               </div>
             ))
           ) : (
-            words.map((word, index) => (
+            answers.map((word, index) => (
               <div
                 key={`image-${index}`}
                 className="mb-4 p-3 border rounded cursor-pointer text-center"
@@ -226,14 +261,11 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
           )}
         </div>
       </div>
+
       <div className="mt-6 text-center">
         {words.length !== 0 && (
           <>
-            {isExam ? (
-              <Button onClick={checkAnswers} className="px-6 py-2">
-                Submit Answers
-              </Button>
-            ) : (
+            {!isExam && (
               <Button onClick={checkAnswers} className="px-6 py-2">
                 Check Answers
               </Button>

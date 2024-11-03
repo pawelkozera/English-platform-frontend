@@ -41,6 +41,7 @@ export interface TaskAdd {
   correctAnswer: string;
   lessonId: number;
   wordIds: number[];
+  score: number;
 }
 
 export interface LessonAdd {

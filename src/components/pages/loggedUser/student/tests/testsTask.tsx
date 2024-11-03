@@ -23,12 +23,22 @@ export function TestsTask({ tasks }: TestsTaskProps) {
     localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
   }, [completedTasks]);
 
+  const handlePreviousTask = () => {
+    if (currentTaskIndex > 0) {
+      setCurrentTaskIndex(prevIndex => prevIndex - 1);
+    }
+  }
+
   const handleTaskComplete = () => {  
     handleMarkAsDone();
-  
-    if (!isLastTask) {
-      setCurrentTaskIndex(currentTaskIndex + 1);
+    handleNextTask();
+  }
+
+  const handleNextTask = () => {
+    if (isLastTask) {
+      return;
     }
+    setCurrentTaskIndex(prevIndex => prevIndex + 1);
   }
 
   const handleMarkAsDone = () => {
@@ -90,11 +100,26 @@ export function TestsTask({ tasks }: TestsTaskProps) {
             />
           )}
 
-          {isLastTask && (
-            <Button className="mt-4" onClick={handleFinish}>
-              Finish Exam
-            </Button>
-          )}
+          <div className="flex gap-4 mt-4 justify-center">
+            {currentTaskIndex > 0 && (
+              <Button onClick={handlePreviousTask}>
+                Previous Question
+              </Button>
+            )}
+
+            {!isLastTask && (
+              <Button onClick={handleNextTask}>
+                Next Question
+              </Button>
+            )}
+
+            {isLastTask && (
+              <Button onClick={handleFinish} variant={"green"}>
+                Finish Exam
+              </Button>
+            )}
+          </div>
+
         </CardContent>
       </Card>
     </div>
