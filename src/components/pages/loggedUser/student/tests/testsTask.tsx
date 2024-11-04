@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { TaskConnection } from '../task/taskConnection'
 import { TaskTypingExam } from '../task/taskTypingExam'
 import { TypingType, ConnectionType, TaskResponse } from '@/lib/types'
+import { Word } from '@/lib/types'
 
 interface TestsTaskProps {
   tasks: TaskResponse[]
@@ -50,7 +51,86 @@ export function TestsTask({ tasks }: TestsTaskProps) {
   }
 
   const handleFinish = () => {
-    console.log("Exam finished!")
+    countScore()
+    removeItemsFromLocalStorage()
+  }
+
+  const countScore = (): number => {
+    let score: number = 0;
+
+    tasks.forEach((task) => {
+      if (task.taskTypeName === "typing") {
+        score += countScoreForTyping(task)
+      }
+      else if (task.taskTypeName === "connection") {
+        score += countScoreForConnection(task)
+      }
+    });
+    
+    return score
+  }
+
+  const countScoreForTyping = (task: TaskResponse): number => {
+    let userAnswer: string | null = localStorage.getItem(`task-${task.id}`);
+    if (!userAnswer) {
+      return 0;
+    }
+  
+    const userAnswersArray: string[] = JSON.parse(userAnswer) as string[];
+  
+    let score = 0;
+    userAnswersArray.forEach((userAnswer, index) => {
+      switch (task.taskSubTypeName) {
+        case "translation":
+        case "image":
+        case "audio":
+        case "retyping":
+          if (userAnswer === task.words[index].translation.toLowerCase().trim()) {
+            score += task.score / task.words.length
+          }
+          break;
+        case "reverseTranslation":
+          if (userAnswer === task.words[index].word.toLowerCase().trim()) {
+            score += task.score / task.words.length
+          }
+          break;
+      }
+    });
+    
+    return score;
+  };
+  
+
+  const countScoreForConnection = (task: TaskResponse): number => {
+    let userAnswer: string | null = localStorage.getItem(`task-${task.id}`);
+    if (!userAnswer) {
+      return 0;
+    }
+  
+    const savedData: { 
+      connections: [number, number][], 
+      answers: Word[], 
+      questions: Word[] 
+    } = JSON.parse(userAnswer);
+    
+    if (!savedData.connections || !Array.isArray(savedData.connections) || savedData.connections.length !== savedData.answers.length) {
+      return 0;
+    }
+
+    const { connections, answers, questions } = savedData;
+    
+    let score = 0;
+    connections.forEach(([questionIndex, answerIndex]: [number, number]) => {
+      if (questions[questionIndex].id === answers[answerIndex].id) {
+        score += task.score / task.words.length
+      }
+    });
+  
+    return score;
+  };
+  
+  
+  const removeItemsFromLocalStorage = () => {
     tasks.forEach(task => {
       localStorage.removeItem(`task-${task.id}`);
     });

@@ -98,6 +98,7 @@ export interface TaskResponse {
   correctAnswer: string;
   completed: boolean; 
   words: WordResponse[];
+  score: number;
 }
 
 export type TaskType = 'typing' | 'connection'
