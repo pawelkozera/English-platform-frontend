@@ -20,6 +20,7 @@ export function TestsTasks() {
     queryKey: ["testCompletionStatus", testInstanceIdNumber],
     queryFn: () => fetchTestHistoryCompletionStatus(testInstanceIdNumber),
     enabled: !isNaN(testInstanceIdNumber),
+    refetchOnWindowFocus: false,
     retry: false,
     onError: (error) => {
       console.log(error)
@@ -33,7 +34,6 @@ export function TestsTasks() {
       }
     }
   });
-  
 
   useEffect(() => {
     if (!fromNavigate && document.referrer === "") {

@@ -24,6 +24,37 @@ export function TestsTask({ tasks }: TestsTaskProps) {
     return storedCompletedTasks ? JSON.parse(storedCompletedTasks) : new Array(tasks.length).fill(false);
   });
 
+  const [isTranslated, setIsTranslated] = useState(false);
+
+  useEffect(() => {
+    const checkTranslation = () => {
+      const hiddenTextEnglish = document.getElementById('hidden-text-english') as HTMLElement;
+      const hiddenTextPolish = document.getElementById('hidden-text-polish') as HTMLElement;
+
+      if (hiddenTextEnglish && hiddenTextEnglish.innerText !== 'Dog') {
+        setIsTranslated(() => {
+          return true;
+        });
+      }
+
+      if (hiddenTextPolish && hiddenTextPolish.innerText !== 'Pies') {
+        setIsTranslated(() => {
+          return true;
+        });
+      }
+
+      console.log(isTranslated);
+
+      if (isTranslated) {
+        console.log("changed", hiddenTextEnglish.innerHTML, hiddenTextPolish.innerText);
+      }
+    };
+
+    const interval = setInterval(checkTranslation, 2000);
+
+    return () => clearInterval(interval);
+  }, [isTranslated]);
+
   const addTestHistoryMutation = useMutation(addTestHistory, {
     onSuccess: () => {
       navigate(`/tests`);
@@ -241,7 +272,10 @@ export function TestsTask({ tasks }: TestsTaskProps) {
                 Finish Exam
               </Button>
             )}
-          </div>
+          </div> 
+
+          <p id="hidden-text-english" className="hidden">Dog</p>
+          <p id="hidden-text-polish" className="hidden">Pies</p>
 
         </CardContent>
       </Card>

@@ -33,5 +33,5 @@ export function InformationCards() {
         </Card>
       </div>
     </section>
-  )
+  );
 }
