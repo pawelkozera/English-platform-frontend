@@ -7,7 +7,8 @@ import { TypingType, ConnectionType, TaskResponse } from '@/lib/types'
 import { Word } from '@/lib/types'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation } from 'react-query'
-import { addTestHistory } from '@/lib/api/testHistory'
+import { addTestHistory, addTestHistoryBeaconEndpoint } from '@/lib/api/testHistory'
+import { addSuspiciousActivity } from '@/lib/api/suspiciousActivityApi'
 
 interface TestsTaskProps {
   tasks: TaskResponse[]
@@ -43,8 +44,6 @@ export function TestsTask({ tasks }: TestsTaskProps) {
         });
       }
 
-      console.log(isTranslated);
-
       if (isTranslated) {
         console.log("changed", hiddenTextEnglish.innerHTML, hiddenTextPolish.innerText);
       }
@@ -54,6 +53,49 @@ export function TestsTask({ tasks }: TestsTaskProps) {
 
     return () => clearInterval(interval);
   }, [isTranslated]);
+
+  const addSuspiciousActivityMutation = useMutation(addSuspiciousActivity, {
+    onSuccess: () => {
+      console.log("Added suspicious activity");
+    },
+    onError: (error: unknown) => {
+      console.error("Error completing task:", error);
+    },
+  });
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        const description = "User tried to leave the page (switched tabs, minimized window, etc.)";
+
+        addSuspiciousActivityMutation.mutate(
+          { 
+            testInstanceId: testInstanceIdNumber,
+            description: description
+          }
+        );
+      }
+    };
+
+    const handleBeforeUnload = () => {
+      const score = countScore();
+
+        const payload = {
+          testInstanceId: testInstanceIdNumber,
+          score: score,
+        };
+    
+        navigator.sendBeacon(addTestHistoryBeaconEndpoint, JSON.stringify(payload));
+    };
+  
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [testInstanceIdNumber]);
 
   const addTestHistoryMutation = useMutation(addTestHistory, {
     onSuccess: () => {
@@ -202,7 +244,6 @@ export function TestsTask({ tasks }: TestsTaskProps) {
   
     return score;
   };
-  
   
   const removeItemsFromLocalStorage = () => {
     tasks.forEach(task => {

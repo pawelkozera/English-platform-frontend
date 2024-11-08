@@ -2,6 +2,8 @@ import apiClient from "@/interceptor/axios-interceptor";
 import { TestHistoryAdd } from "../types";
 import axios from "axios";
 
+export const addTestHistoryBeaconEndpoint = apiClient.defaults.baseURL + '/api/v1/test/history/addTestHistoryBeacon'
+
 export const addTestHistory = async ({
     testInstanceId,
     score

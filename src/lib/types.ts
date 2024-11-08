@@ -106,6 +106,11 @@ export interface TaskResponse {
   score: number;
 }
 
+export interface SuspiciousActivityAdd {
+  testInstanceId: number;
+  description: string;
+}
+
 export type TaskType = 'typing' | 'connection'
 export type TypingType = "translation" | "reverseTranslation" | "image" | "retyping" | "audio";
 export type ConnectionType = 'translation' | 'image';
