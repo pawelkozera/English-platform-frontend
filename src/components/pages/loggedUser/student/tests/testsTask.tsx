@@ -7,8 +7,8 @@ import { TypingType, ConnectionType, TaskResponse } from '@/lib/types'
 import { Word } from '@/lib/types'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation } from 'react-query'
-import { addTestHistory, addTestHistoryBeaconEndpoint } from '@/lib/api/testHistory'
-import { addSuspiciousActivity } from '@/lib/api/suspiciousActivityApi'
+import { addTestHistory } from '@/lib/api/testHistory'
+import { useSuspiciousActivity } from './hooks/useSuspiciousActivity'
 
 interface TestsTaskProps {
   tasks: TaskResponse[]
@@ -24,78 +24,6 @@ export function TestsTask({ tasks }: TestsTaskProps) {
     const storedCompletedTasks = localStorage.getItem('completedTasks');
     return storedCompletedTasks ? JSON.parse(storedCompletedTasks) : new Array(tasks.length).fill(false);
   });
-
-  const [isTranslated, setIsTranslated] = useState(false);
-
-  useEffect(() => {
-    const checkTranslation = () => {
-      const hiddenTextEnglish = document.getElementById('hidden-text-english') as HTMLElement;
-      const hiddenTextPolish = document.getElementById('hidden-text-polish') as HTMLElement;
-
-      if (hiddenTextEnglish && hiddenTextEnglish.innerText !== 'Dog') {
-        setIsTranslated(() => {
-          return true;
-        });
-      }
-
-      if (hiddenTextPolish && hiddenTextPolish.innerText !== 'Pies') {
-        setIsTranslated(() => {
-          return true;
-        });
-      }
-
-      if (isTranslated) {
-        console.log("changed", hiddenTextEnglish.innerHTML, hiddenTextPolish.innerText);
-      }
-    };
-
-    const interval = setInterval(checkTranslation, 2000);
-
-    return () => clearInterval(interval);
-  }, [isTranslated]);
-
-  const addSuspiciousActivityMutation = useMutation(addSuspiciousActivity, {
-    onSuccess: () => {
-      console.log("Added suspicious activity");
-    },
-    onError: (error: unknown) => {
-      console.error("Error completing task:", error);
-    },
-  });
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        const description = "User tried to leave the page (switched tabs, minimized window, etc.)";
-
-        addSuspiciousActivityMutation.mutate(
-          { 
-            testInstanceId: testInstanceIdNumber,
-            description: description
-          }
-        );
-      }
-    };
-
-    const handleBeforeUnload = () => {
-      const score = countScore();
-
-        const payload = {
-          testInstanceId: testInstanceIdNumber,
-          score: score,
-        };
-    
-        navigator.sendBeacon(addTestHistoryBeaconEndpoint, JSON.stringify(payload));
-    };
-  
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [testInstanceIdNumber]);
 
   const addTestHistoryMutation = useMutation(addTestHistory, {
     onSuccess: () => {
@@ -255,6 +183,11 @@ export function TestsTask({ tasks }: TestsTaskProps) {
   const navigateToTask = (index: number) => {
     setCurrentTaskIndex(index)
   }
+
+  useSuspiciousActivity({
+    testInstanceId: testInstanceIdNumber,
+    countScore: countScore,
+  });
 
   return (
     <div className="w-full max-w-4xl mx-auto">

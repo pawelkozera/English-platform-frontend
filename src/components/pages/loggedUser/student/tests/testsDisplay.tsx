@@ -10,11 +10,11 @@ import { useMutation } from 'react-query';
 import axios from "axios"
 
 interface TestDisplay {
-	testInstanceId: number
+  testInstanceId: number
   testInstanceUUID: string
   testName: string
   activationTime: Date
-	endTime: Date
+  endTime: Date
 }
 
 export function TestsDisplay() {
@@ -22,6 +22,7 @@ export function TestsDisplay() {
   const [page, setPage] = useState(0)
   const pageSize = 25
   const navigate = useNavigate(); 
+  const [isMaximized, setIsMaximized] = useState(false);
 
   const addTestHistoryMutation = useMutation(addTestHistory, {
     onError: (error: unknown) => {
@@ -49,6 +50,20 @@ export function TestsDisplay() {
     }
   }, [selectedGroup?.id, refetch])
 
+  useEffect(() => {
+    const checkMaximized = () => {
+      const tolerance = 100;
+      const maximized = Math.abs(window.outerWidth - screen.availWidth) <= tolerance && Math.abs(window.outerHeight - screen.availHeight) <= tolerance;
+      setIsMaximized(maximized);
+    };
+
+    checkMaximized();
+    window.addEventListener('resize', checkMaximized);
+    return () => {
+      window.removeEventListener('resize', checkMaximized);
+    };
+  }, []);
+
   const tests: TestDisplay[] = data?._embedded?.testInstanceDisplayResponseList || []
   const totalPages = data?.page?.totalPages || 1
 
@@ -56,6 +71,11 @@ export function TestsDisplay() {
   if (error) return <div className="text-center text-red-500">Error loading lessons</div>
 
   const handleTestClick = (testInstanceId: number, testInstanceUUID: string) => {
+    if (!isMaximized) {
+      alert("Please maximize the window before starting the test.");
+      return;
+    }
+
     addTestHistoryMutation.mutate(
       {
         testInstanceId: testInstanceId,
