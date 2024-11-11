@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useMutation } from 'react-query';
 import { addSuspiciousActivity } from '@/lib/api/suspiciousActivityApi';
 import { addTestHistoryBeaconEndpoint } from '@/lib/api/testHistory';
@@ -6,10 +6,12 @@ import { addTestHistoryBeaconEndpoint } from '@/lib/api/testHistory';
 interface SuspiciousActivityParams {
   testInstanceId: number;
   countScore: () => number;
+  idleTimeout?: number;
 }
 
-export function useSuspiciousActivity({ testInstanceId, countScore }: SuspiciousActivityParams) {
+export function useSuspiciousActivity({ testInstanceId, countScore, idleTimeout = 10000 }: SuspiciousActivityParams) {
   const [isTranslated, setIsTranslated] = useState(false);
+  const lastActivityTimeRef = useRef(Date.now());
 
   const addSuspiciousActivityMutation = useMutation(addSuspiciousActivity, {
     onSuccess: () => {
@@ -101,7 +103,39 @@ export function useSuspiciousActivity({ testInstanceId, countScore }: Suspicious
     return () => {
       window.removeEventListener('resize', debounceResize);
     };
-  }, [testInstanceId, addSuspiciousActivityMutation]);
+  }, [testInstanceId]);
+
+  useEffect(() => {
+    const resetActivity = () => {
+      lastActivityTimeRef.current = Date.now();
+    };
+
+    window.addEventListener('mousemove', resetActivity);
+    window.addEventListener('keydown', resetActivity);
+    window.addEventListener('click', resetActivity);
+
+    return () => {
+      window.removeEventListener('mousemove', resetActivity);
+      window.removeEventListener('keydown', resetActivity);
+      window.removeEventListener('click', resetActivity);
+    };
+  }, []);
+  
+  useEffect(() => {
+    const checkIdleTimeout = () => {
+      const now = Date.now();
+      if (now - lastActivityTimeRef.current >= idleTimeout) {
+        addSuspiciousActivityMutation.mutate({
+          testInstanceId,
+          description: 'IDLE_TIMEOUT',
+        });
+        lastActivityTimeRef.current = Date.now();
+      }
+    };
+
+    const interval = setInterval(checkIdleTimeout, 1000);
+    return () => clearInterval(interval);
+  }, [idleTimeout, testInstanceId]);
 }
 
 function debounce(func: (...args: any[]) => void, wait: number) {
