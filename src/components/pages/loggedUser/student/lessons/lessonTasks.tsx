@@ -5,6 +5,7 @@ import { fetchTasksByIds } from '@/lib/api/taskApi';
 import { Sidebar } from '@/components/common/sidebar';
 import { Footer } from '@/components/common/footer';
 import { LessonTask } from './lessonTask';
+import { decodeTask } from '@/components/utils/decodeBase64';
 
 interface TaskResponse {
   taskId: number;
@@ -26,7 +27,10 @@ export function LessonTasks() {
   
   const { data: tasks, isLoading: tasksLoading, error: tasksError } = useQuery({
     queryKey: ["taskDetails", ...taskIds],
-    queryFn: () => fetchTasksByIds(taskIds),
+    queryFn: async () => {
+      const fetchedTasks = await fetchTasksByIds(taskIds || []);
+      return fetchedTasks.map(decodeTask);
+    },
     enabled: taskIds.length > 0,
     refetchOnWindowFocus: false,
   });

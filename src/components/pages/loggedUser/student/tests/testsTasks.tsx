@@ -7,6 +7,7 @@ import { TestsTask } from './testsTask';
 import { fetchTasksForTestInstance } from '@/lib/api/testInstanceApi';
 import { fetchTestHistoryCompletionStatus } from '@/lib/api/testHistory';
 import { useEffect } from 'react';
+import { decodeTask } from '@/components/utils/decodeBase64';
 import axios from 'axios';
 
 export function TestsTasks() {
@@ -50,7 +51,10 @@ export function TestsTasks() {
 
   const { data: tasks, isLoading: tasksLoading, error: tasksError } = useQuery({
     queryKey: ["taskDetails", taskIds],
-    queryFn: () => fetchTasksByIds(taskIds || []),
+    queryFn: async () => {
+      const fetchedTasks = await fetchTasksByIds(taskIds || []);
+      return fetchedTasks.map(decodeTask);
+    },
     enabled: Boolean(taskIds && taskIds.length > 0),
     refetchOnWindowFocus: false,
   });
