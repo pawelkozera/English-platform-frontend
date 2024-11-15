@@ -80,6 +80,7 @@ export interface TestInterfaceAdd {
   groupId: number;
   activationTime: string;
   endTime: string;
+  timeDuration: number;
 }
 
 export interface TestHistoryAdd {

@@ -15,6 +15,7 @@ interface TestDisplay {
   testName: string
   activationTime: Date
   endTime: Date
+  timeDuration: number
 }
 
 export function TestsDisplay() {
@@ -70,7 +71,21 @@ export function TestsDisplay() {
   if (isLoading) return <div className="flex justify-center items-center h-64">Loading...</div>
   if (error) return <div className="text-center text-red-500">Error loading lessons</div>
 
-  const handleTestClick = (testInstanceId: number, testInstanceUUID: string) => {
+  const handleTestClick = (testInstanceId: number, testInstanceUUID: string, activationTime: Date, endTime: Date) => {
+    const currentTime = new Date();
+    const testActivationTime = new Date(activationTime);
+    const testEndTime = new Date(endTime);
+
+    if (currentTime < testActivationTime) {
+      alert("This test has not started yet.");
+      return;
+    }
+
+    if (currentTime >= testEndTime) {
+      alert("This test has already ended.");
+      return;
+    }
+
     if (!isMaximized) {
       alert("Please maximize the window before starting the test.");
       return;
@@ -85,6 +100,9 @@ export function TestsDisplay() {
         onSuccess: () => {
           navigate(`/tests/${testInstanceUUID}/${testInstanceId}`, { state: { fromNavigate: true } });
         },
+        onError: (error: unknown) => {
+          console.error("Error adding test history:", error);
+        }
       }
     );
   };
@@ -97,7 +115,7 @@ export function TestsDisplay() {
           <Card
             key={test.testInstanceId}
             className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => handleTestClick(test.testInstanceId, test.testInstanceUUID)}
+            onClick={() => handleTestClick(test.testInstanceId, test.testInstanceUUID, test.activationTime, test.endTime)}
           >
             <CardHeader className="pb-2">
               <CardTitle className="text-lg mb-4">{test.testName}</CardTitle>
@@ -106,8 +124,12 @@ export function TestsDisplay() {
               <div className="space-y-2">
                 <strong>Start Time:</strong>
                 <p className="pb-4"> {new Date(test.activationTime).toLocaleString()} </p>
+
                 <strong>End Time:</strong>
-                <p>{new Date(test.endTime).toLocaleString()}</p>
+                <p className="pb-4">{new Date(test.endTime).toLocaleString()}</p>
+
+                <strong>Time Duration:</strong>
+                <p>{test.timeDuration} minutes</p>
               </div>
             </CardContent>
           </Card>

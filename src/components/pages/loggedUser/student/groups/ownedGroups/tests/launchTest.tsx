@@ -23,6 +23,7 @@ export function LaunchTest() {
   const [selectedGroup, setSelectedGroup] = useState<number | null>(null)
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
+  const [timeDuration, setTimeDuration] = useState<number>(60);
 
   const { groups } = useUser()
 
@@ -67,8 +68,9 @@ export function LaunchTest() {
     mutation.mutate({
       testTemplateId: selectedTemplate,
       groupId: selectedGroup,
-      activationTime: startDate.toISOString(),
-      endTime: endDate.toISOString(),
+      activationTime: new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000).toISOString(),
+      endTime: new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000).toISOString(),
+      timeDuration: timeDuration
     })
   }
 
@@ -145,6 +147,20 @@ export function LaunchTest() {
             />
           </div>
         </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="time-duration">Time Duration (minutes)</Label>
+          <input
+            id="time-duration"
+            type="number"
+            value={timeDuration || ""}
+            onChange={(e) => setTimeDuration(Number(e.target.value))}
+            className="w-full p-2 border rounded text-foreground bg-background"
+            placeholder="Enter time duration in minutes"
+            min={1}
+          />
+        </div>
+
       </CardContent>
       <CardFooter>
         <Button

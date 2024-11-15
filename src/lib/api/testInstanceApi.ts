@@ -6,12 +6,14 @@ export const launchTest = async ({
   groupId,
   activationTime,
   endTime,
+  timeDuration
 }: TestInterfaceAdd): Promise<any> => {
   const response = await apiClient.post('/api/v1/test/instance/add', {
     testTemplateId,
     groupId,
     activationTime,
     endTime,
+    timeDuration
   });
   return response.data;
 };
