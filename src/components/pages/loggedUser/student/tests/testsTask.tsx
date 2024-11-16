@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { TaskConnection } from '../task/taskConnection'
@@ -9,12 +9,14 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation } from 'react-query'
 import { addTestHistory } from '@/lib/api/testHistory'
 import { useSuspiciousActivity } from './hooks/useSuspiciousActivity'
+import { time } from 'console'
 
 interface TestsTaskProps {
   tasks: TaskResponse[]
+  timeDuration: number
 }
 
-export function TestsTask({ tasks }: TestsTaskProps) {
+export function TestsTask({ tasks, timeDuration }: TestsTaskProps) {
   const navigate = useNavigate();
   const { testInstanceId } = useParams();
   const testInstanceIdNumber = Number(testInstanceId);
@@ -24,6 +26,8 @@ export function TestsTask({ tasks }: TestsTaskProps) {
     const storedCompletedTasks = localStorage.getItem('completedTasks');
     return storedCompletedTasks ? JSON.parse(storedCompletedTasks) : new Array(tasks.length).fill(false);
   });
+
+  const [timeRemaining, setTimeRemaining] = useState(timeDuration * 60);
 
   const addTestHistoryMutation = useMutation(addTestHistory, {
     onSuccess: () => {
@@ -49,10 +53,22 @@ export function TestsTask({ tasks }: TestsTaskProps) {
       window.addEventListener('popstate', onBackButtonEvent);
 
       return () => {
-          window.removeEventListener('popstate', onBackButtonEvent);  
+        window.removeEventListener('popstate', onBackButtonEvent);  
       };
-  }, []);
-  
+  }, []);  
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (timeRemaining <= 0) {
+        handleFinish();
+        clearInterval(interval);
+      } else {
+        setTimeRemaining(prevTime => prevTime - 1);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeRemaining]);
   
   const currentTask = tasks[currentTaskIndex]
   const isLastTask = currentTaskIndex === tasks.length - 1
@@ -189,6 +205,22 @@ export function TestsTask({ tasks }: TestsTaskProps) {
     countScore: countScore,
   });
 
+  const hours = Math.floor(timeRemaining / 3600);
+  const minutes = Math.floor((timeRemaining % 3600) / 60);
+  const seconds = timeRemaining % 60;
+
+  let displayTime;
+  let timeStyle = {};
+
+  if (hours > 0) {
+    displayTime = `${hours} hours ${minutes} minutes ${seconds} seconds`;
+  } else if (minutes > 0) {
+    displayTime = `${minutes} minutes ${seconds} seconds`;
+  } else {
+    displayTime = `${seconds} seconds`;
+    timeStyle = { color: 'red' };
+  }
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="flex flex-wrap gap-2 mb-4">
@@ -206,7 +238,15 @@ export function TestsTask({ tasks }: TestsTaskProps) {
 
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle>Question {currentTaskIndex + 1} of {tasks.length}</CardTitle>
+          <div className="flex justify-end">
+            <span style={timeStyle}>
+              {displayTime}
+            </span>
+          </div>
+
+          <div className="flex justify-between items-center w-full">
+            <CardTitle className="flex-grow text-center">Question {currentTaskIndex + 1} of {tasks.length}</CardTitle>
+          </div>
         </CardHeader>
         <CardContent>
           {currentTask.taskTypeName === 'typing' ? (
@@ -250,7 +290,6 @@ export function TestsTask({ tasks }: TestsTaskProps) {
 
           <p id="hidden-text-english" className="hidden">Dog</p>
           <p id="hidden-text-polish" className="hidden">Pies</p>
-
         </CardContent>
       </Card>
     </div>

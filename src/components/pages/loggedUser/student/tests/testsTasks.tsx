@@ -14,6 +14,7 @@ export function TestsTasks() {
   const location = useLocation();
   const navigate = useNavigate();
   const fromNavigate = location.state?.fromNavigate;
+  const timeDuration = location.state?.timeDuration;
   const { testInstanceId } = useParams();
   const testInstanceIdNumber = Number(testInstanceId);
 
@@ -24,7 +25,6 @@ export function TestsTasks() {
     refetchOnWindowFocus: false,
     retry: false,
     onError: (error) => {
-      console.log(error)
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 403 || error.response?.status === 404) {
           console.error("Error while fetching test completion status:", error);
@@ -70,7 +70,7 @@ export function TestsTasks() {
     <div className="h-screen">
       <main className="flex flex-col lg:flex-row">
         <Sidebar />
-        <TestsTask tasks={tasks}/>
+        <TestsTask tasks={tasks} timeDuration={timeDuration} />
       </main>
       <Footer />
     </div>

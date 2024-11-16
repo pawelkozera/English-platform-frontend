@@ -71,7 +71,7 @@ export function TestsDisplay() {
   if (isLoading) return <div className="flex justify-center items-center h-64">Loading...</div>
   if (error) return <div className="text-center text-red-500">Error loading lessons</div>
 
-  const handleTestClick = (testInstanceId: number, testInstanceUUID: string, activationTime: Date, endTime: Date) => {
+  const handleTestClick = (testInstanceId: number, testInstanceUUID: string, activationTime: Date, endTime: Date, timeDuration: number) => {
     const currentTime = new Date();
     const testActivationTime = new Date(activationTime);
     const testEndTime = new Date(endTime);
@@ -98,7 +98,12 @@ export function TestsDisplay() {
       },
       {
         onSuccess: () => {
-          navigate(`/tests/${testInstanceUUID}/${testInstanceId}`, { state: { fromNavigate: true } });
+          navigate(`/tests/${testInstanceUUID}/${testInstanceId}`, {
+            state: { 
+              fromNavigate: true, 
+              timeDuration: timeDuration
+            }
+          });
         },
         onError: (error: unknown) => {
           console.error("Error adding test history:", error);
@@ -115,7 +120,7 @@ export function TestsDisplay() {
           <Card
             key={test.testInstanceId}
             className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => handleTestClick(test.testInstanceId, test.testInstanceUUID, test.activationTime, test.endTime)}
+            onClick={() => handleTestClick(test.testInstanceId, test.testInstanceUUID, test.activationTime, test.endTime, test.timeDuration)}
           >
             <CardHeader className="pb-2">
               <CardTitle className="text-lg mb-4">{test.testName}</CardTitle>
