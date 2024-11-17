@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { TaskConnection } from '../task/taskConnection'
@@ -9,7 +9,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation } from 'react-query'
 import { addTestHistory } from '@/lib/api/testHistory'
 import { useSuspiciousActivity } from './hooks/useSuspiciousActivity'
-import { time } from 'console'
 
 interface TestsTaskProps {
   tasks: TaskResponse[]

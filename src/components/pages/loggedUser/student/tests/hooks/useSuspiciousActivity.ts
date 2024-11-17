@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useMutation } from 'react-query';
 import { addSuspiciousActivity } from '@/lib/api/suspiciousActivityApi';
 import { addTestHistoryBeaconEndpoint } from '@/lib/api/testHistory';
+import { debounce } from '@/components/utils/debounce';
 
 interface SuspiciousActivityParams {
   testInstanceId: number;
@@ -136,13 +137,25 @@ export function useSuspiciousActivity({ testInstanceId, countScore, idleTimeout 
     const interval = setInterval(checkIdleTimeout, 1000);
     return () => clearInterval(interval);
   }, [idleTimeout, testInstanceId]);
-}
 
-function debounce(func: (...args: any[]) => void, wait: number) {
-  let timeout: NodeJS.Timeout;
+  useEffect(() => {
+    const handleFocus = () => {
+      console.log('Window focused');
+    };
 
-  return (...args: any[]) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
+    const handleBlur = () => {
+      addSuspiciousActivityMutation.mutate({
+        testInstanceId,
+        description: 'WINDOW_FOCUS_LOST',
+      });
+    };
+
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('blur', handleBlur);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('blur', handleBlur);
+    };
+  }, [testInstanceId]);
 }
