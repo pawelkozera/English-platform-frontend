@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress"
 import { Volume2 } from "lucide-react"
 import { Word } from "@/lib/types"
 import { TypingType } from "@/lib/types"
+import { RepetitionButton } from "../repetitions/repetitionButton"
 
 interface TaskTypingProps {
   words: Word[]
@@ -138,6 +139,9 @@ export function TaskTyping({ words, questionType, onComplete, isPreview = false 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex flex-col items-center">
             {renderQuestion()}
+            {currentWord?.id && (
+              <RepetitionButton wordId={currentWord.id} />
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="answer" className="text-sm font-medium text-muted-foreground">Your answer:</Label>

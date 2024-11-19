@@ -112,6 +112,14 @@ export interface SuspiciousActivityAdd {
   description: string;
 }
 
+export interface AddWordToRepetitions {
+  wordId: number;
+}
+
+export interface RemoveWordFromRepetitions {
+  wordId: number;
+}
+
 export type TaskType = 'typing' | 'connection'
 export type TypingType = "translation" | "reverseTranslation" | "image" | "retyping" | "audio";
 export type ConnectionType = 'translation' | 'image';
