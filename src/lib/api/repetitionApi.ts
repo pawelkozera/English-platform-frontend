@@ -13,8 +13,6 @@ export const addWordToRepetitions  = async ({
 export const removeWordFromRepetitions  = async ({
     wordId
   }: RemoveWordFromRepetitions): Promise<any> => {
-    const response = await apiClient.post('/api/v1/', {
-      wordId
-    });
+    const response = await apiClient.delete(`/api/v1/repetition/remove/${wordId}`);
     return response.data;
 };

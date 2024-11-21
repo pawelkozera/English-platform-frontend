@@ -140,7 +140,10 @@ export function TaskTyping({ words, questionType, onComplete, isPreview = false 
           <div className="flex flex-col items-center">
             {renderQuestion()}
             {currentWord?.id && (
-              <RepetitionButton wordId={currentWord.id} />
+              <RepetitionButton 
+                wordId={currentWord.id} 
+                isPreview={isPreview} 
+              />
             )}
           </div>
           <div className="space-y-2">

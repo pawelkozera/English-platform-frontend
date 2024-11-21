@@ -6,9 +6,10 @@ import { useMutation } from "react-query";
 
 interface RepetitionButtonProps {
   wordId: number;
+  isPreview?: boolean;
 }
 
-export function RepetitionButton({ wordId }: RepetitionButtonProps) {
+export function RepetitionButton({ wordId, isPreview = false }: RepetitionButtonProps) {
   const [isInRepetitions, setIsInRepetitions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,10 +23,30 @@ export function RepetitionButton({ wordId }: RepetitionButtonProps) {
     },
   });
 
+  const removeWordFromRepetitionsMutation = useMutation(removeWordFromRepetitions, {
+    onSuccess: () => {
+      setIsInRepetitions(false);
+      console.log("Removed word from repetitions");
+    },
+    onError: (error) => {
+      console.error("Error removing word from repetitions:", error);
+    },
+  });
+
   const handleToggleRepetition = async () => {
-    addWordToRepetitionsMutation.mutate({
-      wordId: wordId,
-    });
+    if (isPreview) {
+      return;
+    }
+
+    if (isInRepetitions) {
+      removeWordFromRepetitionsMutation.mutate({
+        wordId: wordId,
+      });
+    } else {
+      addWordToRepetitionsMutation.mutate({
+        wordId: wordId,
+      });
+    }
   };
 
   return (
