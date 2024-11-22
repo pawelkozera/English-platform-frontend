@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { useQuery } from "react-query";
 import { fetchGroups } from "@/lib/api/groupApi";
 import { fetchProfile } from "@/lib/api/userApi";
+import { fetchRepetitionForTodayByGroup } from "@/lib/api/repetitionApi";
+import { setWithExpiry, getWithExpiry } from "./localStorageExpiry";
 
 import { User, Group } from "@/lib/types";
 
@@ -13,6 +15,8 @@ interface UserContextType {
   logout: () => void;
   setSelectedGroup: (group: Group | null) => void;
   refetchGroups: () => void;
+  repetitionCounts: Record<number, number>;
+  updateRepetitionCountForGroup: (groupId: number, count: number) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -30,6 +34,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
 
+  const [repetitionCounts, setRepetitionCounts] = useState<Record<number, number>>(() => {
+    const storedCounts = localStorage.getItem("repetitionCounts");
+    return storedCounts ? JSON.parse(storedCounts) : {};
+  });  
+
   const login = async () => {
     try {
       const data = await fetchProfile();
@@ -45,9 +54,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setUser(null);
     setGroups([]);
+    setSelectedGroup(null);
+    setRepetitionCounts({});
+  
     localStorage.removeItem("user");
     localStorage.removeItem("groups");
-    setSelectedGroup(null);
+  
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("repetitionCount-")) {
+        localStorage.removeItem(key);
+      }
+    });
   };
 
   const { refetch: refetchGroups } = useQuery('groups', fetchGroups, {
@@ -79,8 +96,42 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  const updateRepetitionCountForGroup = async (groupId: number) => {
+    const cachedCount = getWithExpiry(`repetitionCount-${groupId}`);
+    if (cachedCount !== null) {
+      setRepetitionCounts((prev) => ({ ...prev, [groupId]: cachedCount }));
+      return;
+    }
+  
+    try {
+      const count = await fetchRepetitionForTodayByGroup(groupId);
+      setRepetitionCounts((prev) => ({ ...prev, [groupId]: count }));
+      setWithExpiry(`repetitionCount-${groupId}`, count, 6 * 60 * 60 * 1000);
+    } catch (error) {
+      console.error("Failed to fetch repetition count", error);
+    }
+  };
+  
+  useEffect(() => {
+    if (selectedGroup) {
+      updateRepetitionCountForGroup(selectedGroup.id);
+    }
+  }, [selectedGroup]);  
+
   return (
-    <UserContext.Provider value={{ user, groups, selectedGroup, login, logout, setSelectedGroup, refetchGroups}}>
+    <UserContext.Provider
+      value={{
+        user,
+        groups,
+        selectedGroup,
+        login,
+        logout,
+        setSelectedGroup,
+        refetchGroups,
+        repetitionCounts,
+        updateRepetitionCountForGroup,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

@@ -5,11 +5,12 @@ import { useNavigate } from "react-router-dom";
 import apiClient from "@/interceptor/axios-interceptor";
 import { useUser } from '@/components/utils/UserContext';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge"
 import { useEffect } from "react";
 
 export function Sidebar() {
 	const navigate = useNavigate();
-	const { logout, groups, selectedGroup, setSelectedGroup } = useUser();
+	const { logout, groups, selectedGroup, setSelectedGroup, repetitionCounts } = useUser();
 
 	useEffect(() => {
 			if (groups.length > 0 && !selectedGroup) {
@@ -74,7 +75,7 @@ export function Sidebar() {
                 </Link>
                 <Link to={"/repetitions"} className="flex items-center px-4 py-4 hover:bg-secondary">
                     <RepeatIcon className="w-5 h-5 mr-3" />
-                    Repetitions
+                    Repetitions {repetitionCounts && selectedGroup && <Badge className="ml-2" variant="green">{repetitionCounts[selectedGroup.id]}</Badge>}
                 </Link>
                 <Link to={"/language-games"} className="flex items-center px-4 py-4 hover:bg-secondary">
                     <Gamepad2 className="w-5 h-5 mr-3" />

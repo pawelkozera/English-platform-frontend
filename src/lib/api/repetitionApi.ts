@@ -23,3 +23,8 @@ export const fetchIsWordInRepetitions = async (wordId: number): Promise<any> => 
   const response = await apiClient.get(`/api/v1/repetition/exists/${wordId}`);
   return response.data;
 };
+
+export const fetchRepetitionForTodayByGroup = async (wordId: number): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/repetition/count/today/${wordId}`);
+  return response.data;
+};
