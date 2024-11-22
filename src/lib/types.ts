@@ -114,6 +114,7 @@ export interface SuspiciousActivityAdd {
 
 export interface AddWordToRepetitions {
   wordId: number;
+  groupId: number;
 }
 
 export interface RemoveWordFromRepetitions {

@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CirclePlus, CircleMinus } from "lucide-react";
-import { addWordToRepetitions, removeWordFromRepetitions } from "@/lib/api/repetitionApi";
-import { useMutation } from "react-query";
+import { addWordToRepetitions, removeWordFromRepetitions, fetchIsWordInRepetitions } from "@/lib/api/repetitionApi";
+import { useMutation, useQuery } from "react-query";
+import { useUser } from "@/components/utils/UserContext";
 
 interface RepetitionButtonProps {
   wordId: number;
@@ -10,23 +10,32 @@ interface RepetitionButtonProps {
 }
 
 export function RepetitionButton({ wordId, isPreview = false }: RepetitionButtonProps) {
-  const [isInRepetitions, setIsInRepetitions] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { selectedGroup } = useUser();
+
+  const { data: isInRepetitions, isLoading, refetch } = useQuery(
+    ['wordInRepetitions', wordId],
+    () => fetchIsWordInRepetitions(wordId),
+    {
+      enabled: !isPreview,
+      initialData: false,
+      refetchOnWindowFocus: false
+    }
+  );
 
   const addWordToRepetitionsMutation = useMutation(addWordToRepetitions, {
     onSuccess: () => {
-      setIsInRepetitions(true);
       console.log("Added word to repetitions");
+      refetch();
     },
     onError: (error) => {
-      console.error("Error completing task:", error);
+      console.error("Error adding word to repetitions:", error);
     },
   });
 
   const removeWordFromRepetitionsMutation = useMutation(removeWordFromRepetitions, {
     onSuccess: () => {
-      setIsInRepetitions(false);
       console.log("Removed word from repetitions");
+      refetch();
     },
     onError: (error) => {
       console.error("Error removing word from repetitions:", error);
@@ -43,15 +52,24 @@ export function RepetitionButton({ wordId, isPreview = false }: RepetitionButton
         wordId: wordId,
       });
     } else {
-      addWordToRepetitionsMutation.mutate({
-        wordId: wordId,
-      });
+      const groupId = selectedGroup?.id;
+      
+      if (groupId) {
+        addWordToRepetitionsMutation.mutate({
+          wordId: wordId,
+          groupId: selectedGroup.id
+        });
+      }
     }
   };
 
+  if (isLoading) {
+    return <Button type="button" disabled={true}>Loading...</Button>;
+  }
+
   return (
     <Button
-			type="button"
+      type="button"
       onClick={handleToggleRepetition}
       disabled={isLoading}
       variant={isInRepetitions ? "outline" : "green"}
