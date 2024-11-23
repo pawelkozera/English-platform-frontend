@@ -28,3 +28,13 @@ export const fetchRepetitionForTodayByGroup = async (wordId: number): Promise<an
   const response = await apiClient.get(`/api/v1/repetition/count/today/${wordId}`);
   return response.data;
 };
+
+export const fetchRepetitionWordsByGroup = async (
+  groupId: number,
+  limit: number = 30
+): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/repetition/words/${groupId}`, {
+    params: { limit },
+  });
+  return response.data;
+};
