@@ -1,62 +1,136 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { fetchRepetitionWordsByGroup } from "@/lib/api/repetitionApi";
+import { fetchRepetitionWordsByGroup, updateRepetitions } from "@/lib/api/repetitionApi";
 import { useUser } from "@/components/utils/UserContext";
+import { RepetitionUpdateRequest } from "@/lib/types";
+
+type Word = {
+  repetitionWordId: number;
+  word: string;
+  translation: string;
+  image: string | null;
+};
 
 export function WordRepetitionTrainer() {
-  const { repetitionCounts, selectedGroup } = useUser();
+  const { repetitionCounts, selectedGroup, updateRepetitionCountForGroup } = useUser();
   const [correctAnswerCounter, setCorrectAnswerCounter] = useState(0);
   const [userAnswer, setUserAnswer] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
   const [showRatingButtons, setShowRatingButtons] = useState(false);
+  const [ratingCache, setRatingCache] = useState<Map<number, number>>(new Map());
+  const [progress, setProgress] = useState(0);
+  const [wordsLength, setWordsLength] = useState(0);
 
   const { data: fetchedWords, isLoading } = useQuery(
-    ["repetitionWords", 1],
-    () => fetchRepetitionWordsByGroup(1, 30),
+    ["repetitionWords", selectedGroup?.id],
+    () =>
+      fetchRepetitionWordsByGroup({
+        groupId: selectedGroup?.id || 0,
+        answeredWordIds: [],
+        limit: 30,
+      }),
     {
-      staleTime: 60000,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
     }
   );
 
-  const [words, setWords] = useState<
-    { repetitionWordId: number; word: string; translation: string; image: string | null }[]
-  >([]);
-  const [currentWord, setCurrentWord] = useState<
-    { repetitionWordId: number; word: string; translation: string; image: string | null } | null
-  >(null);
+  const [words, setWords] = useState<Word[]>([]);
+  const [currentWord, setCurrentWord] = useState<Word | null>(null);
 
   const [correctAnswers, setCorrectAnswers] = useState<
     { repetitionWordId: number; word: string; translation: string }[]
   >([]);
 
-  useEffect(() => {
-    if (correctAnswers.length >= 5) {
-      console.log("Correct answers:", correctAnswers);
-      setCorrectAnswers([]);
+  const mutation = useMutation(updateRepetitions, {
+    onSuccess: (data) => {
+      console.log("Repetition updated successfully:", data);
+    },
+    onError: (error) => {
+      console.error("Error updating repetition:", error);
     }
-  
-    if (words.length === 0 && correctAnswers.length > 0) {
-      console.log("Remaining correct answers:", correctAnswers);
+  });
+
+  useEffect(() => {
+    if (correctAnswers.length >= 5 && selectedGroup) {
+      sendUpdateRequests();
       setCorrectAnswers([]);
+      fetchMoreWords();
+      updateRepetitionCountForGroup(selectedGroup.id, repetitionCounts[selectedGroup.id] - 1);
+    }
+    else if (words.length === 0 && correctAnswers.length > 0 && selectedGroup) {
+      sendUpdateRequests();
+      setCorrectAnswers([]);
+      updateRepetitionCountForGroup(selectedGroup.id, 0);
     }
   }, [correctAnswers, words]);
 
+  const sendUpdateRequests = () => {
+    const updateRequests: RepetitionUpdateRequest[] = correctAnswers
+      .map((answer) => {
+        const grade = ratingCache.get(answer.repetitionWordId);
+  
+        if (grade === undefined) {
+          return null;
+        }
+  
+        return {
+          repetitionWordId: answer.repetitionWordId,
+          grade: grade,
+        };
+      })
+      .filter((request) => request !== null);
+  
+    if (updateRequests.length > 0) {
+      mutation.mutate(updateRequests);
+    }
+  };
+
+  const fetchMoreWords = async () => {
+    try {
+      const answeredWordIds = [
+        ...words.map((word) => word.repetitionWordId),
+        ...correctAnswers.map((answer) => answer.repetitionWordId),
+      ];
+      const newWords = await fetchRepetitionWordsByGroup({
+        groupId: 1,
+        answeredWordIds,
+        limit: 10,
+      });
+      setWords((prevWords) => [...prevWords, ...newWords]);
+    } catch (error) {
+      console.error("Error fetching more words:", error);
+    }
+  };  
+
   useEffect(() => {
     if (fetchedWords?.length) {
-      setWords(fetchedWords);
-      setCurrentWord(fetchedWords[0]);
+      setWords((prevWords) => {
+        const existingIds = new Set(prevWords.map((word) => word.repetitionWordId));
+        const uniqueWords = fetchedWords.filter((word: Word) => !existingIds.has(word.repetitionWordId));
+        return [...prevWords, ...uniqueWords];
+      });
+      if (!currentWord && fetchedWords.length > 0) {
+        setCurrentWord(fetchedWords[0]);
+      }
     }
   }, [fetchedWords]);
 
-  let wordsLength = 0;
-  if (selectedGroup) {
-    wordsLength = repetitionCounts[selectedGroup.id];
-  }
-  const progress = (correctAnswerCounter / wordsLength) * 100;
+  useEffect(() => {
+    let wordsLength = 0;
+    if (selectedGroup) {
+      wordsLength = repetitionCounts[selectedGroup.id];
+    }
+    setWordsLength(wordsLength);
+  }, []);
+
+  useEffect(() => {
+    setProgress((correctAnswerCounter / wordsLength) * 100);
+  }, [correctAnswerCounter]);
 
   const checkAnswer = () => {
     if (currentWord) {
@@ -97,6 +171,19 @@ export function WordRepetitionTrainer() {
           { repetitionWordId: currentWord.repetitionWordId, word: currentWord.word, translation: currentWord.translation },
         ]);
       }
+
+      if (!ratingCache.has(currentWord.repetitionWordId)) {
+        let numberRating = 1;
+        if (rating === "So-so") {
+          numberRating = 2;
+        }
+        else if (rating === "Great") {
+          numberRating = 3;
+        }
+        
+        setRatingCache(new Map(ratingCache.set(currentWord.repetitionWordId, numberRating)));
+      }
+
       nextWord(newWords);
     }
   };
@@ -132,10 +219,14 @@ export function WordRepetitionTrainer() {
 
   return (
     <div className="w-2/3 mx-auto mt-10 p-6 bg-secondary rounded-lg shadow-lg">
-      <p className="mb-2">
-        {correctAnswerCounter} / {wordsLength}
-      </p>
-      <Progress value={progress} className="mb-6" />
+      {wordsLength > 0 && (
+        <>
+          <p className="mb-2">
+            {correctAnswerCounter} / {wordsLength}
+          </p>
+          <Progress value={progress} className="mb-6" />
+        </>
+      )}
       {words.length > 0 && currentWord ? (
         <>
           <Card className="p-6 mb-6">
@@ -168,6 +259,7 @@ export function WordRepetitionTrainer() {
                   onClick={showHint}
                   variant="orange"
                   className="w-1/3 m-4"
+                  disabled={mutation.isLoading}
                 >
                   Hint
                 </Button>
@@ -175,6 +267,7 @@ export function WordRepetitionTrainer() {
                   onClick={checkAnswer}
                   variant="green"
                   className="w-1/3 m-4"
+                  disabled={mutation.isLoading}
                 >
                   Check
                 </Button>
@@ -185,6 +278,7 @@ export function WordRepetitionTrainer() {
                   onClick={() => handleRating("Poor")}
                   variant="destructive"
                   className="w-1/3 m-4"
+                  disabled={mutation.isLoading}
                 >
                   Poor
                 </Button>
@@ -192,6 +286,7 @@ export function WordRepetitionTrainer() {
                   onClick={() => handleRating("So-so")}
                   variant="orange"
                   className="w-1/3 m-4"
+                  disabled={mutation.isLoading}
                 >
                   So-so
                 </Button>
@@ -199,6 +294,7 @@ export function WordRepetitionTrainer() {
                   onClick={() => handleRating("Great")}
                   variant="green"
                   className="w-1/3 m-4"
+                  disabled={mutation.isLoading}
                 >
                   Great
                 </Button>

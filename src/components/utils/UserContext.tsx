@@ -16,7 +16,7 @@ interface UserContextType {
   setSelectedGroup: (group: Group | null) => void;
   refetchGroups: () => void;
   repetitionCounts: Record<number, number>;
-  updateRepetitionCountForGroup: (groupId: number, count: number) => void;
+  updateRepetitionCountForGroup: (groupId: number, count?: number) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -96,7 +96,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const updateRepetitionCountForGroup = async (groupId: number) => {
+  const updateRepetitionCountForGroup = async (groupId: number, count?: number) => {
+    if (count !== undefined) {
+      setRepetitionCounts((prev) => {
+        const updatedCounts = { ...prev, [groupId]: count };
+        localStorage.setItem("repetitionCounts", JSON.stringify(updatedCounts));
+        return updatedCounts;
+      });
+      setWithExpiry(`repetitionCount-${groupId}`, count, 6 * 60 * 60 * 1000);
+      return;
+    }
+
     const cachedCount = getWithExpiry(`repetitionCount-${groupId}`);
     if (cachedCount !== null) {
       setRepetitionCounts((prev) => ({ ...prev, [groupId]: cachedCount }));

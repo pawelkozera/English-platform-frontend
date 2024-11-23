@@ -121,6 +121,17 @@ export interface RemoveWordFromRepetitions {
   wordId: number;
 }
 
+export interface RepetitionDisplayRequest {
+  groupId: number;
+  limit: number;
+  answeredWordIds: number[];
+}
+
+export interface RepetitionUpdateRequest {
+  repetitionWordId: number;
+  grade: number;
+}
+
 export type TaskType = 'typing' | 'connection'
 export type TypingType = "translation" | "reverseTranslation" | "image" | "retyping" | "audio";
 export type ConnectionType = 'translation' | 'image';

@@ -1,5 +1,5 @@
 import apiClient from "@/interceptor/axios-interceptor";
-import { AddWordToRepetitions, RemoveWordFromRepetitions } from "../types";
+import { AddWordToRepetitions, RemoveWordFromRepetitions, RepetitionDisplayRequest, RepetitionUpdateRequest } from "../types";
 
 export const addWordToRepetitions  = async ({
     wordId,
@@ -29,12 +29,22 @@ export const fetchRepetitionForTodayByGroup = async (wordId: number): Promise<an
   return response.data;
 };
 
-export const fetchRepetitionWordsByGroup = async (
-  groupId: number,
-  limit: number = 30
-): Promise<any> => {
-  const response = await apiClient.get(`/api/v1/repetition/words/${groupId}`, {
-    params: { limit },
+export const fetchRepetitionWordsByGroup = async ({
+  groupId,
+  answeredWordIds = [],
+  limit = 30
+}: RepetitionDisplayRequest): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/repetition/words`, {
+    params: {
+      groupId,
+      answeredWordIds: answeredWordIds.join(','),
+      limit
+    }
   });
+  return response.data;
+};
+
+export const updateRepetitions = async (repetitionUpdateRequests: RepetitionUpdateRequest[]): Promise<any> => {
+  const response = await apiClient.post('/api/v1/repetition/update', repetitionUpdateRequests);
   return response.data;
 };
