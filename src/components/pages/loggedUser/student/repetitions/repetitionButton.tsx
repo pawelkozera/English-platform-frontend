@@ -52,7 +52,7 @@ export function RepetitionButton({ wordId, isPreview = false }: RepetitionButton
         { wordId, groupId },
         {
           onSuccess: () => {
-            console.log("Added word to repetitionasdadss");
+            console.log("Added word to repetition");
             fetchAndSetRepetitionCount(groupId, true);
             refetch();
           },

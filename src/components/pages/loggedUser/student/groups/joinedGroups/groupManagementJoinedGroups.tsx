@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from '@/components/utils/UserContext';
-import { GroupList } from '../common/groupList';
-import { GroupStatistics } from '../common/groupStatistics';
+import { GroupList } from '../../common/groupList';
+import { GroupStatistics } from '../../common/groupStatistics';
 import { GroupJoinForm } from './groupJoinForm';
 
 export function GroupManagementJoinedGroups() {
@@ -16,7 +16,7 @@ export function GroupManagementJoinedGroups() {
   };
 
   return (
-    <Card>
+    <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle>Manage Joined Groups</CardTitle>
       </CardHeader>

@@ -115,7 +115,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const fetchAndSetRepetitionCount = async (groupId: number, fetchAgain: boolean = false) => {
-    console.log("asd")
     if (!fetchAgain) {
       const cachedCount = getWithExpiry(`repetitionCount-${groupId}`);
       if (cachedCount !== null) {

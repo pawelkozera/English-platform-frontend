@@ -6,8 +6,8 @@ import { fetchLessonsFromGroup } from '@/lib/api/lessonApi'
 import { fetchWordsOwnedByUser } from '@/lib/api/wordApi'
 import { useMutation } from "react-query";
 import { addTask } from "@/lib/api/taskApi";
-import { TaskConnection } from '../../../task/taskConnection'
-import { TaskTyping } from '../../../task/taskTyping'
+import { TaskConnection } from '../../task/taskConnection'
+import { TaskTyping } from '../../task/taskTyping'
 import { TypingType, ConnectionType } from '@/lib/types'
 import { Pagination } from '@/components/common/pagination'
 import { TaskTypeSelector } from './taskTypeSelector'

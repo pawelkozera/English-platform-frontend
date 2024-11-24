@@ -11,6 +11,7 @@ import { MainPageUnLogged } from './components/pages/unLoggedUser/main.tsx';
 import { MainPageLogged } from './components/pages/loggedUser/main.tsx';
 import { Repetitions } from './components/pages/loggedUser/student/repetitions/repetitions.tsx';
 import { Groups } from './components/pages/loggedUser/student/groups/groups.tsx';
+import { ManageGroups } from './components/pages/loggedUser/student/manageGroups/manageGroups.tsx';
 import { LanguageGames } from './components/pages/loggedUser/student/languageGames/languageGames.tsx';
 import { Lessons } from './components/pages/loggedUser/student/lessons/lessons.tsx';
 import { LessonTasks } from './components/pages/loggedUser/student/lessons/lessonTasks.tsx';
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
   {
     path: "/groups",
     element: <Groups />
+  },
+  {
+    path: "/groupsManagement",
+    element: <ManageGroups />
   },
   {
     path: "/language-games",

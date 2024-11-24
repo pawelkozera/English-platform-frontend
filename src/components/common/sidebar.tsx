@@ -1,4 +1,4 @@
-import { BookOpen, RepeatIcon, Gamepad2, UserCircle, Users, LogOut, BookType } from "lucide-react";
+import { BookOpen, RepeatIcon, Gamepad2, UserCircle, Users, LogOut, BookType, SquarePen } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { useNavigate } from "react-router-dom";
@@ -77,18 +77,26 @@ export function Sidebar() {
                     <RepeatIcon className="w-5 h-5 mr-3" />
                     Repetitions {repetitionCounts && selectedGroup && <Badge className="ml-2" variant="green">{repetitionCounts[selectedGroup.id]}</Badge>}
                 </Link>
+                {/* 
                 <Link to={"/language-games"} className="flex items-center px-4 py-4 hover:bg-secondary">
                     <Gamepad2 className="w-5 h-5 mr-3" />
                     Language Games
                 </Link>
+                */}
                 <Link to={"/groups"} className="flex items-center px-4 py-4 hover:bg-secondary">
                     <Users className="w-5 h-5 mr-3" />
                     Groups
                 </Link>
+                <Link to={"/groupsManagement"} className="flex items-center px-4 py-4 hover:bg-secondary">
+                    <SquarePen className="w-5 h-5 mr-3" />
+                    Owned Groups
+                </Link>
+                {/*
                 <Link to={"/profile"} className="flex items-center px-4 py-4 hover:bg-secondary">
                     <UserCircle className="w-5 h-5 mr-3" />
                     Profile
                 </Link>
+                */}
                 <div className="py-12">
                     <button onClick={handleLogout} className="flex items-center px-4 py-4 hover:bg-secondary">
                         <LogOut className="w-5 h-5 mr-3" />

@@ -78,7 +78,7 @@ export function LaunchTest() {
   if (templatesError) return <div className="text-destructive">Error loading test templates</div>
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-md mx-auto mt-8">
       <CardHeader>
         <CardTitle>Launch Test</CardTitle>
         <CardDescription>Set up and launch a new test for your group</CardDescription>
