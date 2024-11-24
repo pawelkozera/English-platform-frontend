@@ -10,7 +10,7 @@ interface RepetitionButtonProps {
 }
 
 export function RepetitionButton({ wordId, isPreview = false }: RepetitionButtonProps) {
-  const { selectedGroup } = useUser();
+  const { selectedGroup, fetchAndSetRepetitionCount } = useUser();
 
   const { data: isInRepetitions, isLoading, refetch } = useQuery(
     ['wordInRepetitions', wordId],
@@ -22,44 +22,45 @@ export function RepetitionButton({ wordId, isPreview = false }: RepetitionButton
     }
   );
 
-  const addWordToRepetitionsMutation = useMutation(addWordToRepetitions, {
-    onSuccess: () => {
-      console.log("Added word to repetitions");
-      refetch();
-    },
-    onError: (error) => {
-      console.error("Error adding word to repetitions:", error);
-    },
-  });
+  const addWordToRepetitionsMutation = useMutation(addWordToRepetitions, {});
 
-  const removeWordFromRepetitionsMutation = useMutation(removeWordFromRepetitions, {
-    onSuccess: () => {
-      console.log("Removed word from repetitions");
-      refetch();
-    },
-    onError: (error) => {
-      console.error("Error removing word from repetitions:", error);
-    },
-  });
+  const removeWordFromRepetitionsMutation = useMutation(removeWordFromRepetitions, {});
 
   const handleToggleRepetition = async () => {
-    if (isPreview) {
+    if (isPreview || !selectedGroup) {
       return;
     }
-
+  
+    const groupId = selectedGroup.id;
+  
     if (isInRepetitions) {
-      removeWordFromRepetitionsMutation.mutate({
-        wordId: wordId,
-      });
+      removeWordFromRepetitionsMutation.mutate(
+        { wordId },
+        {
+          onSuccess: () => {
+            console.log("Removed word from repetitions");
+            fetchAndSetRepetitionCount(groupId, true);
+            refetch();
+          },
+          onError: (error) => {
+            console.error("Error removing word from repetitions:", error);
+          },
+        }
+      );
     } else {
-      const groupId = selectedGroup?.id;
-      
-      if (groupId) {
-        addWordToRepetitionsMutation.mutate({
-          wordId: wordId,
-          groupId: selectedGroup.id
-        });
-      }
+      addWordToRepetitionsMutation.mutate(
+        { wordId, groupId },
+        {
+          onSuccess: () => {
+            console.log("Added word to repetitionasdadss");
+            fetchAndSetRepetitionCount(groupId, true);
+            refetch();
+          },
+          onError: (error) => {
+            console.error("Error adding word to repetitions:", error);
+          },
+        }
+      );
     }
   };
 

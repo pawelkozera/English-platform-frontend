@@ -17,6 +17,7 @@ interface UserContextType {
   refetchGroups: () => void;
   repetitionCounts: Record<number, number>;
   updateRepetitionCountForGroup: (groupId: number, count?: number) => void;
+  fetchAndSetRepetitionCount: (groupId: number, fetchAgain: boolean) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -98,25 +99,34 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const updateRepetitionCountForGroup = async (groupId: number, count?: number) => {
     if (count !== undefined) {
-      setRepetitionCounts((prev) => {
-        const updatedCounts = { ...prev, [groupId]: count };
-        localStorage.setItem("repetitionCounts", JSON.stringify(updatedCounts));
-        return updatedCounts;
-      });
-      setWithExpiry(`repetitionCount-${groupId}`, count, 6 * 60 * 60 * 1000);
-      return;
+      setRepetitionCount(groupId, count);
+    } else {
+      await fetchAndSetRepetitionCount(groupId);
+    }
+  };
+
+  const setRepetitionCount = (groupId: number, count: number) => {
+    setRepetitionCounts((prev) => {
+      const updatedCounts = { ...prev, [groupId]: count };
+      localStorage.setItem("repetitionCounts", JSON.stringify(updatedCounts));
+      return updatedCounts;
+    });
+    setWithExpiry(`repetitionCount-${groupId}`, count, 6 * 60 * 60 * 1000);
+  };
+
+  const fetchAndSetRepetitionCount = async (groupId: number, fetchAgain: boolean = false) => {
+    console.log("asd")
+    if (!fetchAgain) {
+      const cachedCount = getWithExpiry(`repetitionCount-${groupId}`);
+      if (cachedCount !== null) {
+        setRepetitionCounts((prev) => ({ ...prev, [groupId]: cachedCount }));
+        return;
+      } 
     }
 
-    const cachedCount = getWithExpiry(`repetitionCount-${groupId}`);
-    if (cachedCount !== null) {
-      setRepetitionCounts((prev) => ({ ...prev, [groupId]: cachedCount }));
-      return;
-    }
-  
     try {
       const count = await fetchRepetitionForTodayByGroup(groupId);
-      setRepetitionCounts((prev) => ({ ...prev, [groupId]: count }));
-      setWithExpiry(`repetitionCount-${groupId}`, count, 6 * 60 * 60 * 1000);
+      setRepetitionCount(groupId, count);
     } catch (error) {
       console.error("Failed to fetch repetition count", error);
     }
@@ -140,6 +150,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         refetchGroups,
         repetitionCounts,
         updateRepetitionCountForGroup,
+        fetchAndSetRepetitionCount
       }}
     >
       {children}
