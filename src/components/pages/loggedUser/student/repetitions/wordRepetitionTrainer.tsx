@@ -16,7 +16,7 @@ type Word = {
 };
 
 export function WordRepetitionTrainer() {
-  const { repetitionCounts, selectedGroup, updateRepetitionCountForGroup } = useUser();
+  const { repetitionCounts, selectedGroup, updateRepetitionCountForGroup, fetchAndSetRepetitionCount } = useUser();
   const [correctAnswerCounter, setCorrectAnswerCounter] = useState(0);
   const [userAnswer, setUserAnswer] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
@@ -36,6 +36,12 @@ export function WordRepetitionTrainer() {
     {
       refetchOnWindowFocus: false,
       cacheTime: 0,
+      onSuccess: () => {
+        if (selectedGroup) {
+          fetchAndSetRepetitionCount(selectedGroup.id, true);
+          setWordsLength(repetitionCounts[selectedGroup.id]);
+        }
+      }
     }
   );
 

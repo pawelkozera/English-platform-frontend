@@ -44,7 +44,7 @@ export function CreateGroupForm() {
         value={groupPassword}
         onChange={(e) => setGroupPassword(e.target.value)}
       />
-      <Button type="submit">Create Group</Button>
+      <Button type="submit" variant={"green"}>Create Group</Button>
     </form>
   );
 }

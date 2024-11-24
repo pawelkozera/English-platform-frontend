@@ -45,7 +45,7 @@ export function GroupJoinForm({ onJoinSuccess }: GroupJoinFormProps) {
         value={groupPassword} 
         onChange={(e) => setGroupPassword(e.target.value)} 
       />
-      <Button type="submit">Join Group</Button>
+      <Button type="submit" variant={"green"}>Join Group</Button>
     </form>
   );
 }
