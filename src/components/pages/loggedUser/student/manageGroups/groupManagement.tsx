@@ -1,19 +1,31 @@
+import { useEffect, useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CreateGroup } from "./group/createGroup"
 import { TaskManagement } from "./taskCreator/taskManagement"
 import { WordManagement } from "./words/wordManagement"
 import { LessonManagement } from "./lessons/lessonManagement"
 import { TestsManagement } from "./tests/testsManagement"
+import { useUser } from "@/components/utils/UserContext"
 
 export function GroupManagement() {
+  const {selectedGroup} = useUser();
+
+  const [activeTab, setActiveTab] = useState("create");
+
+  useEffect(() => {
+    if (!selectedGroup?.owner) {
+      setActiveTab("create");
+    }
+  }, [selectedGroup]);
+
   return (
-    <Tabs defaultValue="create" className="w-full max-w-4xl mx-auto">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl mx-auto">
       <TabsList className="grid w-full grid-cols-5">
         <TabsTrigger value="create">Create Group</TabsTrigger>
-        <TabsTrigger value="tasks">Manage Tasks</TabsTrigger>
-        <TabsTrigger value="words">Manage Words</TabsTrigger>
-        <TabsTrigger value="lessons">Manage Lessons</TabsTrigger>
-        <TabsTrigger value="tests">Manage Tests</TabsTrigger>
+        <TabsTrigger value="tasks" disabled={!selectedGroup?.owner}>Manage Tasks</TabsTrigger>
+        <TabsTrigger value="words" disabled={!selectedGroup?.owner}>Manage Words</TabsTrigger>
+        <TabsTrigger value="lessons" disabled={!selectedGroup?.owner}>Manage Lessons</TabsTrigger>
+        <TabsTrigger value="tests" disabled={!selectedGroup?.owner}>Manage Tests</TabsTrigger>
       </TabsList>
       <TabsContent value="create">
         <CreateGroup />

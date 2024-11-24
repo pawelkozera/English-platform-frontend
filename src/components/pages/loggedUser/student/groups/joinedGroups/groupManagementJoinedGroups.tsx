@@ -16,9 +16,9 @@ export function GroupManagementJoinedGroups() {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full max-w-4xl mx-auto h-min">
       <CardHeader>
-        <CardTitle>Manage Joined Groups</CardTitle>
+        <CardTitle>Manage Groups</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <GroupJoinForm onJoinSuccess={handleJoinSuccess} />
