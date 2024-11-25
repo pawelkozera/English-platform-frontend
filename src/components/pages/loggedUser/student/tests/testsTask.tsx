@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { TaskConnection } from '../task/taskConnection'
@@ -9,6 +9,15 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation } from 'react-query'
 import { addTestHistory } from '@/lib/api/testHistory'
 import { useSuspiciousActivity } from './hooks/useSuspiciousActivity'
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 interface TestsTaskProps {
   tasks: TaskResponse[]
@@ -28,10 +37,14 @@ export function TestsTask({ tasks, timeDuration }: TestsTaskProps) {
 
   const [timeRemaining, setTimeRemaining] = useState(timeDuration * 60);
 
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [testEnded, setTestEnded] = useState(false);
+  const testEndedRef = useRef(false);
+  const [finalScore, setFinalScore] = useState(0);
+  const [totalPossibleScore, setTotalPossibleScore] = useState(0);
+
   const addTestHistoryMutation = useMutation(addTestHistory, {
-    onSuccess: () => {
-      navigate(`/tests`);
-    },
+    onSuccess: () => {},
     onError: (error: unknown) => {
       console.error("Error completing task:", error);
     },
@@ -66,8 +79,23 @@ export function TestsTask({ tasks, timeDuration }: TestsTaskProps) {
       }
     }, 1000);
 
+    if (testEnded) {
+      clearInterval(interval);
+    }
+
     return () => clearInterval(interval);
   }, [timeRemaining]);
+
+  useEffect(() => {
+    if (testEnded && !isAlertOpen) {
+      navigate(`/tests`);
+    }
+  }, [testEnded, isAlertOpen]);
+
+  useEffect(() => {
+    const totalScore = tasks.reduce((total, task) => total + task.score, 0);
+    setTotalPossibleScore(totalScore);
+  }, [totalPossibleScore]);
   
   const currentTask = tasks[currentTaskIndex]
   const isLastTask = currentTaskIndex === tasks.length - 1
@@ -75,6 +103,10 @@ export function TestsTask({ tasks, timeDuration }: TestsTaskProps) {
   useEffect(() => {
     localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
   }, [completedTasks]);
+
+  useEffect(() => {
+    testEndedRef.current = testEnded;
+  }, [testEnded]);
 
   const handlePreviousTask = () => {
     if (currentTaskIndex > 0) {
@@ -104,6 +136,9 @@ export function TestsTask({ tasks, timeDuration }: TestsTaskProps) {
 
   const handleFinish = () => {
     const score = countScore()
+    setFinalScore(score)
+    setIsAlertOpen(true)
+    setTestEnded(true)
     removeItemsFromLocalStorage()
 
     addTestHistoryMutation.mutate(
@@ -158,7 +193,6 @@ export function TestsTask({ tasks, timeDuration }: TestsTaskProps) {
     
     return score;
   };
-  
 
   const countScoreForConnection = (task: TaskResponse): number => {
     let userAnswer: string | null = localStorage.getItem(`task-${task.id}`);
@@ -198,11 +232,14 @@ export function TestsTask({ tasks, timeDuration }: TestsTaskProps) {
   const navigateToTask = (index: number) => {
     setCurrentTaskIndex(index)
   }
-
-  useSuspiciousActivity({
-    testInstanceId: testInstanceIdNumber,
-    countScore: countScore,
-  });
+  
+  if (testEndedRef) {
+    useSuspiciousActivity({
+      testInstanceId: testInstanceIdNumber,
+      countScore: countScore,
+      testEndedRef: testEndedRef
+    });
+  }
 
   const hours = Math.floor(timeRemaining / 3600);
   const minutes = Math.floor((timeRemaining % 3600) / 60);
@@ -291,6 +328,22 @@ export function TestsTask({ tasks, timeDuration }: TestsTaskProps) {
           <p id="hidden-text-polish" className="hidden">Pies</p>
         </CardContent>
       </Card>
+
+      <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Test Completed!</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your final score is: <strong>{finalScore} / {totalPossibleScore}</strong>.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => navigate(`/tests`)}>
+              Next
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

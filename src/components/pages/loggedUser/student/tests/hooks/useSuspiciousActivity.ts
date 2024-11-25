@@ -8,9 +8,10 @@ interface SuspiciousActivityParams {
   testInstanceId: number;
   countScore: () => number;
   idleTimeout?: number;
+  testEndedRef: React.MutableRefObject<boolean>;
 }
 
-export function useSuspiciousActivity({ testInstanceId, countScore, idleTimeout = 10000 }: SuspiciousActivityParams) {
+export function useSuspiciousActivity({ testInstanceId, countScore, idleTimeout = 10000, testEndedRef }: SuspiciousActivityParams) {
   const [isTranslated, setIsTranslated] = useState(false);
   const lastActivityTimeRef = useRef(Date.now());
 
@@ -25,6 +26,8 @@ export function useSuspiciousActivity({ testInstanceId, countScore, idleTimeout 
 
   useEffect(() => {
     const checkTranslation = () => {
+      if (testEndedRef.current) return;
+
       const hiddenTextEnglish = document.getElementById('hidden-text-english') as HTMLElement;
       const hiddenTextPolish = document.getElementById('hidden-text-polish') as HTMLElement;
 
@@ -46,6 +49,8 @@ export function useSuspiciousActivity({ testInstanceId, countScore, idleTimeout 
 
   useEffect(() => {
     const handleVisibilityChange = () => {
+      if (testEndedRef.current) return;
+
       if (document.visibilityState === 'hidden') {
         addSuspiciousActivityMutation.mutate({
           testInstanceId,
@@ -55,6 +60,8 @@ export function useSuspiciousActivity({ testInstanceId, countScore, idleTimeout 
     };
 
     const handleBeforeUnload = () => {
+      if (testEndedRef.current) return;
+
       const score = countScore();
       const payload = {
         testInstanceId,
@@ -79,6 +86,8 @@ export function useSuspiciousActivity({ testInstanceId, countScore, idleTimeout 
     let previousHeight = initialWindowHeight;
 
     const handleResize = () => {
+      if (testEndedRef.current) return;
+
       const currentWidth = window.innerWidth;
       const currentHeight = window.innerHeight;
 
@@ -124,6 +133,8 @@ export function useSuspiciousActivity({ testInstanceId, countScore, idleTimeout 
   
   useEffect(() => {
     const checkIdleTimeout = () => {
+      if (testEndedRef.current) return;
+
       const now = Date.now();
       if (now - lastActivityTimeRef.current >= idleTimeout) {
         addSuspiciousActivityMutation.mutate({
@@ -144,6 +155,8 @@ export function useSuspiciousActivity({ testInstanceId, countScore, idleTimeout 
     };
 
     const handleBlur = () => {
+      if (testEndedRef.current) return;
+      
       addSuspiciousActivityMutation.mutate({
         testInstanceId,
         description: 'WINDOW_FOCUS_LOST',
