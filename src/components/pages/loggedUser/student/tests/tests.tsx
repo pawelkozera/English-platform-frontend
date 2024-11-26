@@ -1,13 +1,13 @@
 import { Sidebar } from "@/components/common/sidebar";
 import { Footer } from "@/components/common/footer";
-import { TestsDisplay } from "./testsDisplay";
+import { TestsManagement } from "./testsManagement";
 
 export function Tests() {
   return (
     <div className="h-screen">
       <main className="flex flex-col lg:flex-row">
         <Sidebar />
-        <TestsDisplay />
+        <TestsManagement />
       </main>
       
       <Footer />

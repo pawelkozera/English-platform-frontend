@@ -16,3 +16,13 @@ export const fetchTestTemplatesOwnedByUser = async (page: number, size: number):
   const response = await apiClient.get(`/api/v1/test/template/all/owned/by/user?page=${page}&size=${size}`);
   return response.data;
 };
+
+export const fetchTestHistoryForDisplay= async (groupId: number, page: number = 0, size: number = 10): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/test/history/all/for/display/${groupId}`, {
+    params: {
+      page: page,
+      size: size,
+    },
+  });
+  return response.data;
+};

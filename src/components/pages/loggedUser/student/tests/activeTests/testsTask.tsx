@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { TaskConnection } from '../task/taskConnection'
-import { TaskTypingExam } from '../task/taskTypingExam'
+import { TaskConnection } from '../../task/taskConnection'
+import { TaskTypingExam } from '../../task/taskTypingExam'
 import { TypingType, ConnectionType, TaskResponse } from '@/lib/types'
 import { Word } from '@/lib/types'
 import { useNavigate, useParams } from 'react-router-dom'

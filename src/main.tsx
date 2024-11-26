@@ -18,7 +18,7 @@ import { LessonTasks } from './components/pages/loggedUser/student/lessons/lesso
 import { Profile } from './components/pages/loggedUser/student/profile/profile.tsx';
 import './index.css'
 import { Tests } from './components/pages/loggedUser/student/tests/tests.tsx';
-import { TestsTasks } from './components/pages/loggedUser/student/tests/testsTasks.tsx';
+import { TestsTasks } from './components/pages/loggedUser/student/tests/activeTests/testsTasks.tsx';
 
 const router = createBrowserRouter([
   {
