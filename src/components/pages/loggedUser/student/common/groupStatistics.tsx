@@ -14,7 +14,7 @@ export function GroupStatistics({ selectedGroup, onLeaveGroup, showOnlyOwner = f
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Group Statistics</CardTitle>
+        <CardTitle>Group Informations</CardTitle>
       </CardHeader>
       <CardContent>
         {shouldShowStatistics ? (

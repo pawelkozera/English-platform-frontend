@@ -19,6 +19,7 @@ import { Profile } from './components/pages/loggedUser/student/profile/profile.t
 import './index.css'
 import { Tests } from './components/pages/loggedUser/student/tests/tests.tsx';
 import { TestsTasks } from './components/pages/loggedUser/student/tests/activeTests/testsTasks.tsx';
+import { Announcements } from './components/pages/loggedUser/student/announcements/announcements.tsx';
 
 const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
   {
     path: "/tests/:testInstanceUUID/:testInstanceId/",
     element: <TestsTasks />
+  },
+  {
+    path: "/announcements",
+    element: <Announcements />
   },
 ]);
 

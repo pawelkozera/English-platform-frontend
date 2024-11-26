@@ -132,6 +132,12 @@ export interface RepetitionUpdateRequest {
   grade: number;
 }
 
+export interface AnnouncementAdd {
+  groupId: number;
+  title: string;
+  content: string;
+}
+
 export type TaskType = 'typing' | 'connection'
 export type TypingType = "translation" | "reverseTranslation" | "image" | "retyping" | "audio";
 export type ConnectionType = 'translation' | 'image';
