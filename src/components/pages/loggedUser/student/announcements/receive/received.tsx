@@ -12,22 +12,29 @@ interface AnnouncementResponse {
 }
 
 export function Received() {
-  const { selectedGroup } = useUser();
+  const { selectedGroup, fetchAndSetUnseenAnouncementsCount, unseenAnouncementsCounts } = useUser();
   const groupId = selectedGroup?.id;
+
   const [page, setPage] = useState(0)
   const pageSize = 3
+
+  const { data, isLoading, error } = useQuery(
+    ['announcements', groupId, page, pageSize],
+    () => fetchAnnouncementsForDisplay(groupId!, page, pageSize),
+    {
+      enabled: !!groupId,
+      keepPreviousData: true,
+      onSuccess: () => {
+        if (selectedGroup && unseenAnouncementsCounts[selectedGroup.id] > 0) {
+          fetchAndSetUnseenAnouncementsCount(selectedGroup.id, true);
+        }
+      }
+    }
+  );
 
   if (!groupId) {
     return <p>Please select a group to view announcements.</p>;
   }
-
-  const { data, isLoading, error } = useQuery(
-    ['announcements', groupId, page, pageSize],
-    () => fetchAnnouncementsForDisplay(groupId, page, pageSize),
-    {
-      keepPreviousData: true,
-    }
-  );
 
   if (isLoading) {
     return <p>Loading announcements...</p>;

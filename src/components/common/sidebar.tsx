@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 export function Sidebar() {
 	const navigate = useNavigate();
-	const { logout, groups, selectedGroup, setSelectedGroup, repetitionCounts } = useUser();
+	const { logout, groups, selectedGroup, setSelectedGroup, repetitionCounts, unseenAnouncementsCounts } = useUser();
 
 	useEffect(() => {
 			if (groups.length > 0 && !selectedGroup) {
@@ -83,6 +83,10 @@ export function Sidebar() {
                     Language Games
                 </Link>
                 */}
+                <Link to={"/Announcements"} className="flex items-center px-4 py-4 hover:bg-secondary">
+                    <Mails className="w-5 h-5 mr-3" />
+                    Announcements {unseenAnouncementsCounts && selectedGroup && <Badge className="ml-2" variant="green">{unseenAnouncementsCounts[selectedGroup.id]}</Badge>}
+                </Link>
                 <Link to={"/groups"} className="flex items-center px-4 py-4 hover:bg-secondary">
                     <Users className="w-5 h-5 mr-3" />
                     Groups
@@ -97,10 +101,6 @@ export function Sidebar() {
                     Profile
                 </Link>
                 */}
-                <Link to={"/Announcements"} className="flex items-center px-4 py-4 hover:bg-secondary">
-                    <Mails className="w-5 h-5 mr-3" />
-                    Announcements
-                </Link>
                 <div className="py-12">
                     <button onClick={handleLogout} className="flex items-center px-4 py-4 hover:bg-secondary">
                         <LogOut className="w-5 h-5 mr-3" />

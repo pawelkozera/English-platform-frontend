@@ -23,3 +23,8 @@ export const fetchAnnouncementsForDisplay= async (groupId: number, page: number 
 	});
 	return response.data;
 };
+
+export const fetchUnseenAnnouncementsForTodayByGroup = async (groupId: number): Promise<any> => {
+	const response = await apiClient.get(`/api/v1/userAnnouncement/count/unseen/${groupId}`);
+	return response.data;
+  };

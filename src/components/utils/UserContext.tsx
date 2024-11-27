@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import { fetchGroups } from "@/lib/api/groupApi";
 import { fetchProfile } from "@/lib/api/userApi";
 import { fetchRepetitionForTodayByGroup } from "@/lib/api/repetitionApi";
+import {fetchUnseenAnnouncementsForTodayByGroup} from "@/lib/api/announcementApi"
 import { setWithExpiry, getWithExpiry } from "./localStorageExpiry";
 
 import { User, Group } from "@/lib/types";
@@ -18,6 +19,9 @@ interface UserContextType {
   repetitionCounts: Record<number, number>;
   updateRepetitionCountForGroup: (groupId: number, count?: number) => void;
   fetchAndSetRepetitionCount: (groupId: number, fetchAgain: boolean) => void;
+  unseenAnouncementsCounts: Record<number, number>;
+  updateUnseenAnouncementsCountForGroup: (groupId: number, count?: number) => void;
+  fetchAndSetUnseenAnouncementsCount: (groupId: number, fetchAgain: boolean) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -40,6 +44,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     return storedCounts ? JSON.parse(storedCounts) : {};
   });  
 
+  const [unseenAnouncementsCounts, setUnseenAnouncementsCounts] = useState<Record<number, number>>(() => {
+    const storedCounts = localStorage.getItem("unseenAnouncementsCounts");
+    return storedCounts ? JSON.parse(storedCounts) : {};
+  });  
+
   const login = async () => {
     try {
       const data = await fetchProfile();
@@ -57,12 +66,19 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setGroups([]);
     setSelectedGroup(null);
     setRepetitionCounts({});
+    setUnseenAnouncementsCounts({});
   
     localStorage.removeItem("user");
     localStorage.removeItem("groups");
   
     Object.keys(localStorage).forEach((key) => {
       if (key.startsWith("repetitionCount-")) {
+        localStorage.removeItem(key);
+      }
+    });
+
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("unseenAnouncementsCount-")) {
         localStorage.removeItem(key);
       }
     });
@@ -130,10 +146,46 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       console.error("Failed to fetch repetition count", error);
     }
   };
+
+
+  const updateUnseenAnouncementsCountForGroup = async (groupId: number, count?: number) => {
+    if (count !== undefined) {
+      setUnseenAnouncementsCount(groupId, count);
+    } else {
+      await fetchAndSetUnseenAnouncementsCount(groupId);
+    }
+  };
+
+  const setUnseenAnouncementsCount = (groupId: number, count: number) => {
+    setUnseenAnouncementsCounts((prev) => {
+      const updatedCounts = { ...prev, [groupId]: count };
+      localStorage.setItem("unseenAnouncementsCounts", JSON.stringify(updatedCounts));
+      return updatedCounts;
+    });
+    setWithExpiry(`unseenAnouncementsCount-${groupId}`, count, 6 * 60 * 60 * 1000);
+  };
+
+  const fetchAndSetUnseenAnouncementsCount = async (groupId: number, fetchAgain: boolean = false) => {
+    if (!fetchAgain) {
+      const cachedCount = getWithExpiry(`unseenAnouncementsCount-${groupId}`);
+      if (cachedCount !== null) {
+        setUnseenAnouncementsCounts((prev) => ({ ...prev, [groupId]: cachedCount }));
+        return;
+      } 
+    }
+
+    try {
+      const count = await fetchUnseenAnnouncementsForTodayByGroup(groupId);
+      setUnseenAnouncementsCount(groupId, count);
+    } catch (error) {
+      console.error("Failed to fetch unseen anouncements count", error);
+    }
+  };
   
   useEffect(() => {
     if (selectedGroup) {
       updateRepetitionCountForGroup(selectedGroup.id);
+      updateUnseenAnouncementsCountForGroup(selectedGroup.id);
     }
   }, [selectedGroup]);  
 
@@ -149,7 +201,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         refetchGroups,
         repetitionCounts,
         updateRepetitionCountForGroup,
-        fetchAndSetRepetitionCount
+        fetchAndSetRepetitionCount,
+        unseenAnouncementsCounts,
+        updateUnseenAnouncementsCountForGroup,
+        fetchAndSetUnseenAnouncementsCount
       }}
     >
       {children}
