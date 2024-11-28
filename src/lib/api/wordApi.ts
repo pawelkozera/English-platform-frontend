@@ -9,6 +9,20 @@ export const addWord = async (formData: FormData): Promise<any> => {
   return response.data;
 };
 
+export const editWord = async (wordId: number, formData: FormData): Promise<any> => {
+  const response = await apiClient.put(`/api/v1/word/update/${wordId}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+export const deleteWordById = async (wordId: number): Promise<any> => {
+  const response = await apiClient.delete(`/api/v1/word/delete/${wordId}`);
+  return response.data;
+};
+
 export const fetchWordsOwnedByUser = async (page: number = 0, size: number = 10): Promise<any> => {
   const response = await apiClient.get(`/api/v1/word/all/owned/by/user`, {
     params: {

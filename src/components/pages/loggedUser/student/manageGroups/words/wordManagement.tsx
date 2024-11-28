@@ -1,5 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AddWord } from "./addWord"
+import { EditWord } from "./editWord"
+import { DeleteWord } from "./deleteWord"
 
 export function WordManagement() {
   return (
@@ -13,8 +15,10 @@ export function WordManagement() {
         <AddWord />
       </TabsContent>
       <TabsContent value="edit">
+        <EditWord />
       </TabsContent>
       <TabsContent value="delete">
+        <DeleteWord />
       </TabsContent>
     </Tabs>
   )

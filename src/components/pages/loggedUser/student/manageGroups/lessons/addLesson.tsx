@@ -40,12 +40,12 @@ export function AddLesson() {
   return (
     <Card className="w-full max-w-md mx-auto mt-8">
       <CardHeader>
-        <CardTitle>Dodaj Nową Lekcję</CardTitle>
+        <CardTitle>Add new lesson</CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div>
-            <Label>Tytuł Lekcji</Label>
+            <Label>Subject</Label>
             <Input
               placeholder="Wpisz tytuł lekcji"
               value={title}
@@ -54,11 +54,11 @@ export function AddLesson() {
           </div>
 
           <div>
-            <Label>Wybierz Grupę</Label>
+            <Label>Select a group</Label>
             {groups.length > 0 ? (
               <Select onValueChange={(value) => setGroupId(Number(value))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Wybierz grupę" />
+                  <SelectValue placeholder="Select a group" />
                 </SelectTrigger>
                 <SelectContent>
                   {groups.map((group) => (
@@ -69,7 +69,7 @@ export function AddLesson() {
                 </SelectContent>
               </Select>
             ) : (
-              <p>Brak dostępnych grup</p>
+              <p>No available groups</p>
             )}
           </div>
         </CardContent>
@@ -79,7 +79,7 @@ export function AddLesson() {
             type="submit"
             disabled={mutation.isLoading || !title || !groupId}
           >
-            {mutation.isLoading ? "Dodawanie..." : "Dodaj Lekcję"}
+            {mutation.isLoading ? "Adding..." : "Add lesson"}
           </Button>
         </CardFooter>
       </form>

@@ -45,30 +45,30 @@ export function AddWord() {
   return (
     <Card className="w-full max-w-md mx-auto mt-8">
       <CardHeader>
-        <CardTitle>Dodaj Nowe Słowo</CardTitle>
+        <CardTitle>Add new word</CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div>
-            <Label>Słowo</Label>
+            <Label>Word</Label>
             <Input
-              placeholder="Wpisz słowo"
+              placeholder="Enter word"
               value={word}
               onChange={(e) => setWord(e.target.value)}
             />
           </div>
 
           <div>
-            <Label>Tłumaczenie</Label>
+            <Label>Translation</Label>
             <Input
-              placeholder="Wpisz tłumaczenie"
+              placeholder="Enter translation"
               value={translation}
               onChange={(e) => setTranslation(e.target.value)}
             />
           </div>
 
           <div>
-            <Label>Plik Audio (Opcjonalnie)</Label>
+            <Label>Audio file (Optional)</Label>
             <Input
               type="file"
               accept="audio/*"
@@ -77,7 +77,7 @@ export function AddWord() {
           </div>
 
           <div>
-            <Label>Plik Obrazu (Opcjonalnie)</Label>
+            <Label>Image file (Optional)</Label>
             <Input
               type="file"
               accept="image/*"
@@ -91,7 +91,7 @@ export function AddWord() {
             type="submit"
             disabled={mutation.isLoading || !word || !translation}
           >
-            {mutation.isLoading ? "Dodawanie..." : "Dodaj Słowo"}
+            {mutation.isLoading ? "Adding..." : "Add word"}
           </Button>
         </CardFooter>
       </form>
