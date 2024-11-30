@@ -39,14 +39,14 @@ export interface TaskAdd {
   taskSubTypeName: string;
   content: string | File;
   correctAnswer: string;
-  lessonId: number;
+  lessonId: number[];
   wordIds: number[];
   score: number;
 }
 
 export interface LessonAdd {
   title: string;
-  groupId: number;
+  groupId: number[];
 }
 
 export interface Word {

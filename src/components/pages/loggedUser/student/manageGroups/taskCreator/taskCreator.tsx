@@ -26,7 +26,7 @@ export function TaskCreator() {
   const [taskType, setTaskType] = useState<TaskType>('typing')
   const [subTaskType, setSubTaskType] = useState<TypingType | ConnectionType>('translation')
   const [selectedWords, setSelectedWords] = useState<number[]>([])
-  const [selectedLesson, setSelectedLesson] = useState<LessonResponse | null>(null);
+  const [selectedLesson, setSelectedLesson] = useState<LessonResponse[]>([]);
   const [testScore, setTestScore] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
@@ -52,7 +52,7 @@ export function TaskCreator() {
       taskSubTypeName: subTaskType,
       content: "",
       correctAnswer: "",
-      lessonId: selectedLesson.lessonId,
+      lessonId: selectedLesson.map(lesson => lesson.lessonId),
       wordIds: selectedWords,
       score: testScore
     });
@@ -108,7 +108,7 @@ export function TaskCreator() {
         <CardContent>
           <LessonSelector 
             lessons={lessons} 
-            selectedLesson={selectedLesson} 
+            selectedLesson={selectedLesson}
             onLessonChange={setSelectedLesson} 
           />
           <TaskTypeSelector 

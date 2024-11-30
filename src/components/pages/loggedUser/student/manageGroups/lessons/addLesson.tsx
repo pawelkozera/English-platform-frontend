@@ -10,7 +10,7 @@ import { useUser } from "@/components/utils/UserContext";
 
 export function AddLesson() {
   const [title, setTitle] = useState<string>("");
-  const [groupId, setGroupId] = useState<number | null>(null);
+  const [selectedGroupIds, setSelectedGroupIds] = useState<number[]>([]);
 
   const { groups } = useUser();
 
@@ -23,17 +23,23 @@ export function AddLesson() {
     },
   });
 
+  const handleGroupSelection = (groupId: number) => {
+    setSelectedGroupIds((prev) =>
+      prev.includes(groupId) ? prev.filter((id) => id !== groupId) : [...prev, groupId]
+    );
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !groupId) {
-      console.error("Please provide both a title and a group.");
+    if (!title || selectedGroupIds.length === 0) {
+      console.error("Please provide both a title and at least one group.");
       return;
     }
-    console.log(groupId);
+
     mutation.mutate({
       title,
-      groupId,
+      groupId: selectedGroupIds,
     });
   };
 
@@ -47,27 +53,31 @@ export function AddLesson() {
           <div>
             <Label>Subject</Label>
             <Input
-              placeholder="Wpisz tytuł lekcji"
+              placeholder="Enter lesson title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
 
           <div>
-            <Label>Select a group</Label>
+            <Label>Select groups</Label>
             {groups.length > 0 ? (
-              <Select onValueChange={(value) => setGroupId(Number(value))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a group" />
-                </SelectTrigger>
-                <SelectContent>
-                  {groups.map((group) => (
-                    <SelectItem key={group.id} value={group.id.toString()}>
+              <div className="space-y-2">
+                {groups.map((group) => (
+                  <div key={group.id} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`group-${group.id}`}
+                      checked={selectedGroupIds.includes(group.id)}
+                      onChange={() => handleGroupSelection(group.id)}
+                      className="rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <label htmlFor={`group-${group.id}`} className="text-sm text-gray-700">
                       {group.groupName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                    </label>
+                  </div>
+                ))}
+              </div>
             ) : (
               <p>No available groups</p>
             )}
@@ -77,7 +87,7 @@ export function AddLesson() {
         <CardFooter className="flex justify-end">
           <Button
             type="submit"
-            disabled={mutation.isLoading || !title || !groupId}
+            disabled={mutation.isLoading || !title || selectedGroupIds.length === 0}
           >
             {mutation.isLoading ? "Adding..." : "Add lesson"}
           </Button>
