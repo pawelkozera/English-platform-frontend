@@ -27,3 +27,16 @@ export const joinGroup = async ({
   });
   return response.data
 };
+
+export const assignLessonsToGroup = async ({
+  groupId,
+  lessonIds,
+}: {
+  groupId: number;
+  lessonIds: number[];
+}): Promise<any> => {
+  const response = await apiClient.put(`/api/v1/group/${groupId}/addLessons`, {
+    lessonIds: lessonIds,
+  });
+  return response.data;
+};

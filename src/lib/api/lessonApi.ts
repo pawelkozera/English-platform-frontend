@@ -22,6 +22,16 @@ export const fetchLessonsFromGroup = async (groupId: number, page: number = 0, s
   return response.data;
 };
 
+export const fetchLessonsNotAssignedToGroup = async (groupId: number, page: number = 0, size: number = 10): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/lesson/all/not/assigned/to/group/${groupId}`, {
+    params: {
+      page: page,
+      size: size,
+    },
+  });
+  return response.data;
+};
+
 export const fetchLessonsForDisplay= async (groupId: number, page: number = 0, size: number = 10): Promise<any> => {
   const response = await apiClient.get(`/api/v1/lesson/all/for/display/${groupId}`, {
     params: {
