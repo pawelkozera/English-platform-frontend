@@ -12,8 +12,13 @@ export const addLesson = async ({
 	return response.data
 };
 
-export const fetchLessonsFromGroup = async (groupId: number): Promise<any> => {
-  const response = await apiClient.get(`/api/v1/lesson/all/from/group/${groupId}`);
+export const fetchLessonsFromGroup = async (groupId: number, page: number = 0, size: number = 10): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/lesson/all/from/group/${groupId}`, {
+    params: {
+      page: page,
+      size: size,
+    },
+  });
   return response.data;
 };
 

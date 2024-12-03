@@ -31,6 +31,10 @@ export function TaskCreator() {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const [totalPages, setTotalPages] = useState(1);
+  const [lessonPage, setLessonPage] = useState(0);
+  const [lessonPageSize, setLessonPageSize] = useState(20);
+  const [lessonTotalPages, setLessonTotalPages] = useState(1);
+
   const { selectedGroup } = useUser()
 
   const mutation = useMutation(addTask, {
@@ -62,16 +66,17 @@ export function TaskCreator() {
     if (selectedGroup) {
       const fetchLessons = async () => {
         try {
-          const lessonsData = await fetchLessonsFromGroup(selectedGroup.id);
-          setLessons(lessonsData);
+          const lessonsData = await fetchLessonsFromGroup(selectedGroup.id, lessonPage, lessonPageSize);
+          setLessons(lessonsData._embedded.lessonResponseList || []);
+          setLessonTotalPages(lessonsData.page.totalPages);
         } catch (error) {
           console.error("Error fetching lessons:", error);
         }
       };
-
+  
       fetchLessons();
     }
-  }, [selectedGroup]);
+  }, [selectedGroup, lessonPage, lessonPageSize]);  
 
   useEffect(() => {
     const fetchWords = async () => {
@@ -103,7 +108,7 @@ export function TaskCreator() {
     <div className="max-w-4xl mx-auto p-4">
       <Card>
         <CardHeader>
-          <CardTitle>Task Settings</CardTitle>
+          <CardTitle>Select Lessons</CardTitle>
         </CardHeader>
         <CardContent>
           <LessonSelector 
@@ -111,6 +116,19 @@ export function TaskCreator() {
             selectedLesson={selectedLesson}
             onLessonChange={setSelectedLesson} 
           />
+          <Pagination
+            page={lessonPage}
+            totalPages={lessonTotalPages}
+            onPageChange={setLessonPage}
+          />
+        </CardContent>
+      </Card>
+
+      <Card className='mt-4'>
+        <CardHeader>
+          <CardTitle>Task Settings</CardTitle>
+        </CardHeader>
+        <CardContent>
           <TaskTypeSelector 
             taskType={taskType} 
             subTaskType={subTaskType} 

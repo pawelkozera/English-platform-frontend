@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 
 type LessonResponse = {
   title: string;
@@ -34,7 +33,6 @@ export function LessonSelector({
 
   return (
     <div>
-      <Label htmlFor="lesson">Select Lessons</Label>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
         {lessons.map((lesson) => (
           <Card

@@ -2,11 +2,16 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useState } from "react";
 import { useMutation } from "react-query";
 import { addLesson } from "@/lib/api/lessonApi";
 import { useUser } from "@/components/utils/UserContext";
+import { GroupSelector } from "./groupSelector";
+
+type GroupResponse = {
+  groupName: string;
+  id: number;
+};
 
 export function AddLesson() {
   const [title, setTitle] = useState<string>("");
@@ -23,11 +28,9 @@ export function AddLesson() {
     },
   });
 
-  const handleGroupSelection = (groupId: number) => {
-    setSelectedGroupIds((prev) =>
-      prev.includes(groupId) ? prev.filter((id) => id !== groupId) : [...prev, groupId]
-    );
-  };
+  const handleGroupSelection = (groups: GroupResponse[]) => {
+    setSelectedGroupIds(groups.map(group => group.id));
+  };  
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,27 +63,11 @@ export function AddLesson() {
           </div>
 
           <div>
-            <Label>Select groups</Label>
-            {groups.length > 0 ? (
-              <div className="space-y-2">
-                {groups.map((group) => (
-                  <div key={group.id} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={`group-${group.id}`}
-                      checked={selectedGroupIds.includes(group.id)}
-                      onChange={() => handleGroupSelection(group.id)}
-                      className="rounded border-gray-300 text-primary focus:ring-primary"
-                    />
-                    <label htmlFor={`group-${group.id}`} className="text-sm text-gray-700">
-                      {group.groupName}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p>No available groups</p>
-            )}
+            <GroupSelector
+              groups={groups}
+              selectedGroups={groups.filter(group => selectedGroupIds.includes(group.id))}
+              onGroupChange={handleGroupSelection}
+            />
           </div>
         </CardContent>
 
