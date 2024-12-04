@@ -20,7 +20,7 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
         Previous
       </Button>
       <span className="text-sm text-muted-foreground">
-        Page {page + 1} of {totalPages}
+        Page {page + 1} of {(totalPages > 0 ? totalPages : 1)}
       </span>
       <Button
         onClick={() => onPageChange(Math.min(totalPages - 1, page + 1))}

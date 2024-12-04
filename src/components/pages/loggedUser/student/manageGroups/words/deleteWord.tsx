@@ -10,7 +10,7 @@ export function DeleteWord() {
   const [userWords, setUserWords] = useState<any[]>([]);
   const [selectedWords, setSelectedWords] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, _setPageSize] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedWordDetails, setSelectedWordDetails] = useState<{
     word: string;

@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 type LessonResponse = {
   title: string;
   lessonId: number;
+  groupIds: number[];
 };
 
 type LessonSelectorProps = {

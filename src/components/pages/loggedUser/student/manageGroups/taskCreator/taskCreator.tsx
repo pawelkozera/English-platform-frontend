@@ -18,6 +18,7 @@ type TaskType = 'typing' | 'connection'
 type LessonResponse = {
   title: string;
   lessonId: number;
+  groupIds: number[];
 };
 
 export function TaskCreator() {
@@ -29,10 +30,10 @@ export function TaskCreator() {
   const [selectedLesson, setSelectedLesson] = useState<LessonResponse[]>([]);
   const [testScore, setTestScore] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, _setPageSize] = useState(20);
   const [totalPages, setTotalPages] = useState(1);
   const [lessonPage, setLessonPage] = useState(0);
-  const [lessonPageSize, setLessonPageSize] = useState(20);
+  const [lessonPageSize, _setLessonPageSize] = useState(20);
   const [lessonTotalPages, setLessonTotalPages] = useState(1);
 
   const { selectedGroup } = useUser()

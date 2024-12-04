@@ -11,6 +11,7 @@ import { LessonSelector } from "../taskCreator/lessonSelector";
 type LessonResponse = {
   title: string;
   lessonId: number;
+  groupIds: number[];
 };
 
 export function AddLessonToGroup() {
@@ -77,6 +78,7 @@ export function AddLessonToGroup() {
               lessons={lessons.map((lesson) => ({
                 title: lesson.title,
                 lessonId: lesson.lessonId,
+                groupIds: lesson.groupIds,
               }))}
               selectedLesson={selectedLesson}
               onLessonChange={setSelectedLesson}
