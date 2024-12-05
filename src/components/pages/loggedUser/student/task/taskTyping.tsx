@@ -3,10 +3,10 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
-import { Volume2 } from "lucide-react"
 import { Word } from "@/lib/types"
 import { TypingType } from "@/lib/types"
 import { RepetitionButton } from "../repetitions/repetitionButton"
+import { baseURL } from "@/interceptor/axios-interceptor"
 
 interface TaskTypingProps {
   words: Word[]
@@ -93,31 +93,45 @@ export function TaskTyping({ words, questionType, onComplete, isPreview = false 
 
     switch (questionType) {
       case "translation":
-        return <p className="text-2xl font-semibold mb-4">{currentWord.word}</p>
+        return (
+          <div>
+            <img
+              src={baseURL + "/" + currentWord.imageFilePath || "/placeholder.svg?height=200&width=200"}
+              alt="Word representation"
+              className="w-48 h-48 object-cover mb-4"
+            />
+            <p className="text-2xl font-semibold mb-4">{currentWord.word}</p>
+          </div>
+        )
       case "reverseTranslation":
-        return <p className="text-2xl font-semibold mb-4">{currentWord.translation}</p>
+      case "retyping":
+        return (
+          <div>
+            <img
+              src={baseURL + "/" + currentWord.imageFilePath || "/placeholder.svg?height=200&width=200"}
+              alt="Word representation"
+              className="w-48 h-48 object-cover mb-4"
+            />
+            <p className="text-2xl font-semibold mb-4">{currentWord.translation}</p>
+          </div>
+        )
       case "image":
         return (
           <img
-            src={currentWord.imageFilePath || "/placeholder.svg?height=200&width=200"}
+            src={baseURL + "/" + currentWord.imageFilePath || "/placeholder.svg?height=200&width=200"}
             alt="Word representation"
             className="w-48 h-48 object-cover mb-4"
           />
         )
-      case "retyping":
-        return <p className="text-2xl font-semibold mb-4">{currentWord.translation}</p>
       case "audio":
         return (
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => {
-              console.log("Playing audio:", currentWord.audioFilePath)
-            }}
-          >
-            <Volume2 className="h-4 w-4" />
-            <span className="sr-only">Play audio</span>
-          </Button>
+            <audio controls className="mt-2 mb-8">
+              <source
+                src={baseURL + "/" + currentWord.audioFilePath}
+                type="audio/mpeg"
+              />
+              Your browser does not support the audio element.
+            </audio>
         )
       default:
         return null

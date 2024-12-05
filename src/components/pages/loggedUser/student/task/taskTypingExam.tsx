@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Word, TypingType } from '@/lib/types'
+import { baseURL } from '@/interceptor/axios-interceptor'
 
 interface TaskTypingProps {
   words: Word[]
@@ -100,13 +101,20 @@ export function TaskTypingExam({ words, questionType, onComplete, onMarkAsDone, 
         return (
           <div className="mb-2">
             <p className="text-lg font-semibold mb-2">What's in this image?</p>
-            <img src={word.imageFilePath} alt="Question image" width={200} height={200} className="rounded-md" />
+            <img src={baseURL + '/' + word.imageFilePath} alt="Question image" width={200} height={200} className="rounded-md" />
           </div>
         );
       case "audio":
         return (
           <div className="mb-2">
             <p className="text-lg font-semibold mb-2">What word do you hear?</p>
+            <audio controls className="mt-2 mb-8">
+              <source
+                src={baseURL + "/" + word.audioFilePath}
+                type="audio/mpeg"
+              />
+              Your browser does not support the audio element.
+            </audio>
           </div>
         );
       case "retyping":
@@ -122,7 +130,7 @@ export function TaskTypingExam({ words, questionType, onComplete, onMarkAsDone, 
       <CardContent>
         <form onSubmit={handleSubmit}>
           {words.map((word, index) => (
-            <div key={index} className="mb-4">
+            <div key={index} className="mb-4 flex flex-col items-center">
               {renderQuestion(word, index)}
               <Input
                 ref={(el) => (inputRefs.current[index] = el!)}

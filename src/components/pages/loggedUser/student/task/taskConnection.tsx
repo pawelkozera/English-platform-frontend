@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle, XCircle } from 'lucide-react'
 import { Word } from '@/lib/types';
 import { ConnectionType } from '@/lib/types';
+import { baseURL } from '@/interceptor/axios-interceptor';
 
 const availableColors = ['blue', 'green', 'red', 'purple', 'orange']
 
@@ -255,7 +256,7 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
                 style={{ backgroundColor: getBlockColor(index, false) }}
                 onClick={() => handleBlockClick(index, false)}
               >
-                <img src={word.imageFilePath} alt={word.translation} className="h-16 mx-auto" />
+                <img src={baseURL + "/" + word.imageFilePath} alt={word.translation} className="max-h-60 mx-auto" />
               </div>
             ))
           )}
