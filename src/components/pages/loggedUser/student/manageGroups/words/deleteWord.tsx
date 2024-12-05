@@ -5,6 +5,7 @@ import { useMutation } from "react-query";
 import { fetchWordsOwnedByUser, deleteWordById } from "@/lib/api/wordApi";
 import { WordSelection } from "../taskCreator/wordSelection";
 import { Pagination } from "@/components/common/pagination";
+import { baseURL } from "@/interceptor/axios-interceptor";
 
 export function DeleteWord() {
   const [userWords, setUserWords] = useState<any[]>([]);
@@ -116,24 +117,24 @@ export function DeleteWord() {
           <CardHeader>
             <CardTitle>Word Details</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-col items-center">
             <p className="font-semibold">{selectedWordDetails.word}</p>
 						<p className="text-sm text-gray-500">{selectedWordDetails.translation}</p>
-            {selectedWordDetails.audioFilePath && (
-              <audio controls>
-                <source src={selectedWordDetails.audioFilePath} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
-            )}
             {selectedWordDetails.imageFilePath && (
               <img
-                src={selectedWordDetails.imageFilePath}
+                src={baseURL + '/' + selectedWordDetails.imageFilePath}
                 alt="Word"
                 className="mt-4"
               />
             )}
+            {selectedWordDetails.audioFilePath && (
+              <audio controls className="mt-4">
+                <source src={baseURL + '/' + selectedWordDetails.audioFilePath} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+            )}
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex flex-col items-center">
             <Button variant="destructive" onClick={handleDelete}>
               Delete
             </Button>

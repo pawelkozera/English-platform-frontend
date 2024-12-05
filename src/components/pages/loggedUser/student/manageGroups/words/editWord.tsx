@@ -9,6 +9,7 @@ import { editWord } from "@/lib/api/wordApi";
 import { fetchWordsOwnedByUser } from "@/lib/api/wordApi";
 import { WordSelection } from "../taskCreator/wordSelection";
 import { Pagination } from "@/components/common/pagination";
+import { baseURL } from "@/interceptor/axios-interceptor";
 
 export function EditWord() {
   const [word, setWord] = useState<string>("");
@@ -148,7 +149,6 @@ export function EditWord() {
               />
             </div>
 
-            {audioFilePath && <audio controls src={audioFilePath} />}
             <div>
               <Label>Audio file (Optional)</Label>
               <Input
@@ -158,7 +158,10 @@ export function EditWord() {
               />
             </div>
 
-            {imageFilePath && <img src={imageFilePath} alt="Selected word" />}
+            <div className="flex flex-col items-center">
+              {audioFilePath && <audio controls src={baseURL + '/' + audioFilePath} />}
+            </div>
+
             <div>
               <Label>Image file (Optional)</Label>
               <Input
@@ -167,9 +170,13 @@ export function EditWord() {
                 onChange={(e) => setImageFile(e.target.files?.[0] || null)}
               />
             </div>
+
+            <div className="flex flex-col items-center">
+              {imageFilePath && <img src={baseURL + '/' + imageFilePath} alt="Selected word" className="mb-4" />}
+            </div>
           </CardContent>
 
-          <CardFooter className="flex justify-end">
+          <CardFooter className="flex flex-col items-center">
             <Button
               type="submit"
               disabled={mutation.isLoading || !word || !translation}

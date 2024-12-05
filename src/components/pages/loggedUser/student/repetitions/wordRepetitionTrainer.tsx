@@ -7,12 +7,14 @@ import { Button } from "@/components/ui/button";
 import { fetchRepetitionWordsByGroup, updateRepetitions } from "@/lib/api/repetitionApi";
 import { useUser } from "@/components/utils/UserContext";
 import { RepetitionUpdateRequest } from "@/lib/types";
+import { baseURL } from "@/interceptor/axios-interceptor";
 
 type Word = {
   repetitionWordId: number;
   word: string;
   translation: string;
-  image: string | null;
+  imageFilePath: string | null;
+  audioFilePath: string | null;
 };
 
 export function WordRepetitionTrainer() {
@@ -235,15 +237,24 @@ export function WordRepetitionTrainer() {
       )}
       {words.length > 0 && currentWord ? (
         <>
-          <Card className="p-6 mb-6">
-            <h2 className="text-2xl font-bold mb-4">{currentWord.word}</h2>
-            {currentWord.image && (
+          <Card className="p-6 mb-6 flex flex-col items-center">
+            {currentWord.imageFilePath && (
               <img
-                src={currentWord.image}
+                src={baseURL + "/" + currentWord.imageFilePath}
                 alt={currentWord.word}
-                className="w-fit h-fit mx-auto object-cover mb-4 rounded"
+                className="mx-auto object-cover mb-4 rounded max-h-96"
               />
             )}
+
+            <h2 className="text-2xl font-bold mb-4">{currentWord.word}</h2>
+
+            <audio controls className="mt-2">
+              <source
+                src={baseURL + "/" + currentWord.audioFilePath}
+                type="audio/mpeg"
+              />
+              Your browser does not support the audio element.
+            </audio>
           </Card>
           <Card className="p-6 mb-6">
             <Input
