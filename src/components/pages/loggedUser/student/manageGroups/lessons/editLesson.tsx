@@ -5,7 +5,7 @@ import { useUser } from "@/components/utils/UserContext";
 import { LessonSelector } from "../taskCreator/lessonSelector";
 import { GroupSelector } from "./groupSelector";
 import { Pagination } from "@/components/common/pagination";
-import { fetchLessonsFromGroupWithId } from "@/lib/api/lessonApi";
+import { fetchLessonsOwnedByUser } from "@/lib/api/lessonApi";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -33,25 +33,26 @@ export function EditLesson() {
 
   const { groups, selectedGroup } = useUser();
 
-  useEffect(() => {
-    if (selectedGroup) {
-      const fetchLessons = async () => {
-        try {
-          const lessonsData = await fetchLessonsFromGroupWithId(selectedGroup.id);
-          setLessons(lessonsData._embedded.lessonWithGroupsResponseList || []);
-          setLessonTotalPages(lessonsData.page.totalPages);
-        } catch (error) {
-          console.error("Error fetching lessons:", error);
-        }
-      };
-
-      fetchLessons();
+  const fetchLessons = async () => {
+    try {
+      if (selectedGroup) {
+        const lessonsData = await fetchLessonsOwnedByUser();
+        setLessons(lessonsData._embedded.lessonWithGroupsResponseList || []);
+        setLessonTotalPages(lessonsData.page.totalPages);
+      }
+    } catch (error) {
+      console.error("Error fetching lessons:", error);
     }
+  };
+
+  useEffect(() => {
+    fetchLessons();
   }, [lessonPage, lessonPageSize, selectedGroup]);
 
   const mutation = useMutation((data: { lessonId: number; title: string; groupIds: number[] }) => editLesson(data.lessonId, data), {
 		onSuccess: (data) => {
 			console.log("Lesson edited successfully", data);
+      fetchLessons();
 		},
 		onError: (error) => {
 			console.error("Error during lesson editing", error);
@@ -61,8 +62,8 @@ export function EditLesson() {
   const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 	
-		if (!title || selectedGroupIds.length === 0) {
-			console.error("Please provide both a title and at least one group.");
+		if (!title) {
+			console.error("Please provide a title.");
 			return;
 		}
 	
@@ -93,6 +94,10 @@ export function EditLesson() {
         setTitle(lessons[0].title);
         setSelectedGroupIds(lessons[0].groupIds);
       }
+      else {
+				setTitle("");
+				setSelectedGroupIds([]);
+			}
     }
   };
 
@@ -141,7 +146,6 @@ export function EditLesson() {
               disabled={
                 mutation.isLoading ||
                 !title ||
-                selectedGroupIds.length === 0 ||
                 selectedLesson.length !== 1
               }
             >

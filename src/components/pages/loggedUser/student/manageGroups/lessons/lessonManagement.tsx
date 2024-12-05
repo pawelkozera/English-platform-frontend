@@ -2,6 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AddLesson } from "./addLesson"
 import { AddLessonToGroup } from "./addLessonToGroup"
 import { EditLesson } from "./editLesson"
+import { DeleteLesson } from "./deleteLesson"
 
 export function LessonManagement() {
   return (
@@ -22,6 +23,7 @@ export function LessonManagement() {
         <EditLesson />
       </TabsContent>
       <TabsContent value="delete">
+        <DeleteLesson />
       </TabsContent>
     </Tabs>
   )

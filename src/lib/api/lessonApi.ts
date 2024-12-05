@@ -12,7 +12,6 @@ export const addLesson = async ({
 	return response.data
 };
 
-
 export const editLesson = async (
   lessonId: number,
   { title, groupIds }: { title: string; groupIds: number[] }
@@ -29,6 +28,11 @@ export const editLesson = async (
   return response.data;
 };
 
+export const deleteLessonById = async (lessonId: number): Promise<any> => {
+  const response = await apiClient.delete(`/api/v1/lesson/${lessonId}/delete`);
+  return response.data;
+};
+
 export const fetchLessonsFromGroup = async (groupId: number, page: number = 0, size: number = 10): Promise<any> => {
   const response = await apiClient.get(`/api/v1/lesson/all/from/group/${groupId}`, {
     params: {
@@ -39,8 +43,8 @@ export const fetchLessonsFromGroup = async (groupId: number, page: number = 0, s
   return response.data;
 };
 
-export const fetchLessonsFromGroupWithId = async (groupId: number, page: number = 0, size: number = 10): Promise<any> => {
-  const response = await apiClient.get(`/api/v1/lesson/all/from/group/with/groupIds/${groupId}`, {
+export const fetchLessonsOwnedByUser = async (page: number = 0, size: number = 10): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/lesson/all/owned/by/user`, {
     params: {
       page: page,
       size: size,
