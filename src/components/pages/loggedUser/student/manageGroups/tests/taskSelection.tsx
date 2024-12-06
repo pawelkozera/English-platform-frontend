@@ -3,14 +3,17 @@ import { Button } from "@/components/ui/button";
 import { TaskConnection } from "../../task/taskConnection";
 import { TaskTypingExam } from "../../task/taskTypingExam";
 import { ConnectionType, TypingType, Task } from "@/lib/types";
+import { TaskTyping } from "../../task/taskTyping";
 
 interface TaskSelectionProps {
   userTasks: Task[];
   selectedTasks: number[];
   onTaskSelection: (taskId: number) => void;
+  showSelectButton?: boolean;
+  isExam?: boolean;
 }
 
-export function TaskSelection({ userTasks, selectedTasks, onTaskSelection }: TaskSelectionProps) {
+export function TaskSelection({ userTasks, selectedTasks, onTaskSelection, showSelectButton = false, isExam = true }: TaskSelectionProps) {
   const handleTaskSelect = (taskId: number) => {
     onTaskSelection(taskId);
   };
@@ -24,11 +27,21 @@ export function TaskSelection({ userTasks, selectedTasks, onTaskSelection }: Tas
 
             <div className="overflow-y-auto mb-4">
               {task.taskTypeName === "typing" ? (
-                <TaskTypingExam
-                  words={task.words}
-                  questionType={task.taskSubTypeName as TypingType}
-                  isPreview={true}
-                />
+                <>
+                  {isExam ? (
+                    <TaskTypingExam
+                      words={task.words}
+                      questionType={task.taskSubTypeName as TypingType}
+                      isPreview={true}
+                    />
+                  ) : (
+                    <TaskTyping
+                      words={task.words}
+                      questionType={task.taskSubTypeName as TypingType}
+                      isPreview={true}
+                    />
+                  )}
+                </>
               ) : (
                 <TaskConnection
                   words={task.words}
@@ -37,13 +50,22 @@ export function TaskSelection({ userTasks, selectedTasks, onTaskSelection }: Tas
                 />
               )}
             </div>
-
-            <Button
-              onClick={() => handleTaskSelect(task.id)}
-              className={`w-full ${selectedTasks.includes(task.id) ? "bg-destructive" : "bg-primary"}`}
-            >
-              {selectedTasks.includes(task.id) ? "Remove from test" : "Add to test"}
-            </Button>
+            
+            {showSelectButton ? (
+              <Button
+                onClick={() => handleTaskSelect(task.id)}
+                className={`w-full ${selectedTasks.includes(task.id) ? "bg-destructive" : "bg-primary"}`}
+              >
+                {selectedTasks.includes(task.id) ? "Selected" : "Select"}
+              </Button>
+            ) : (
+              <Button
+                onClick={() => handleTaskSelect(task.id)}
+                className={`w-full ${selectedTasks.includes(task.id) ? "bg-destructive" : "bg-primary"}`}
+              >
+                {selectedTasks.includes(task.id) ? "Remove from test" : "Add to test"}
+              </Button>
+            )}
           </CardContent>
         </Card>
       ))}

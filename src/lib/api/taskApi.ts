@@ -48,3 +48,8 @@ export const fetchTasksOwnedByUser = async (page: number, size: number): Promise
   const response = await apiClient.get(`/api/v1/task/all/owned/by/user?page=${page}&size=${size}`);
   return response.data;
 };
+
+export const deleteTaskById = async (taskId: number): Promise<any> => {
+  const response = await apiClient.delete(`/api/v1/task/${taskId}/delete`);
+  return response.data;
+};
