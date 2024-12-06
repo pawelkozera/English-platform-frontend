@@ -32,3 +32,8 @@ export const fetchTasksForTestInstance= async (testInstanceId: number): Promise<
   const response = await apiClient.get(`/api/v1/test/instance/${testInstanceId}/tasks`);
   return response.data;
 };
+
+export const fetchTestInstancesForGroup= async (groupId: number): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/test/instance/instances/group/${groupId}`);
+  return response.data;
+};

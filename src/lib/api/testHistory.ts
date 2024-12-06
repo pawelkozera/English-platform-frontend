@@ -26,3 +26,8 @@ export const fetchTestHistoryCompletionStatus = async (TestHistoryId: number) =>
     throw new Error("An unexpected error occurred");
   }
 };
+
+export const fetchTestHistoryForInstanceIdAndGroupId= async (testInstanceId: number, groupId: number): Promise<any> => {
+  const response = await apiClient.get(`/api/v1/test/history/${testInstanceId}/group/${groupId}/results`);
+  return response.data;
+};
