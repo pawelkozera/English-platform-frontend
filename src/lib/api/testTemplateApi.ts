@@ -26,3 +26,8 @@ export const fetchTestHistoryForDisplay= async (groupId: number, page: number = 
   });
   return response.data;
 };
+
+export const deleteTestTemplateById = async (testTemplateId: number): Promise<any> => {
+  const response = await apiClient.delete(`/api/v1/test/template/${testTemplateId}/delete`);
+  return response.data;
+};

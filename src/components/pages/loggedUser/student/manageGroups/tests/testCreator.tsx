@@ -68,6 +68,8 @@ export function TestCreator() {
         userTasks={tasks}
         selectedTasks={selectedTasks}
         onTaskSelection={handleTaskSelect}
+        showSelectButton={false}
+        isExam={true}
       />
 
       <Pagination
