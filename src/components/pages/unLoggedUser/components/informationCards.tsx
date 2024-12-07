@@ -13,7 +13,7 @@ export function InformationCards() {
           <CardContent>
               <ul className="space-y-2">
                 <li className="flex items-center"><BookOpen className="mr-2" /> Interactive Lessons</li>
-                <li className="flex items-center"><GamepadIcon className="mr-2" /> Language Games</li>
+                <li className="flex items-center"><GamepadIcon className="mr-2" /> Repetitions</li>
                 <li className="flex items-center"><TestTube className="mr-2" /> Progress Tests</li>
               </ul>
           </CardContent>
@@ -27,7 +27,7 @@ export function InformationCards() {
               <ul className="space-y-2">
                 <li className="flex items-center"><PlusCircle className="mr-2" /> Create Lessons</li>
                 <li className="flex items-center"><FileText className="mr-2" /> Design Tests</li>
-                <li className="flex items-center"><Settings className="mr-2" /> Customize Games</li>
+                <li className="flex items-center"><Settings className="mr-2" /> Manage Groups</li>
               </ul>
           </CardContent>
         </Card>

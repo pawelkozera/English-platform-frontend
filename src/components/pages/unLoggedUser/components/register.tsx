@@ -98,6 +98,7 @@ export function Register() {
             required
           />
         </div>
+        {/** 
         <div>
           <Label htmlFor="role">I am a:</Label>
           <select
@@ -110,6 +111,7 @@ export function Register() {
             <option value="teacher">Teacher</option>
           </select>
         </div>
+        */}
         <Button type="submit" className="w-full">Sign Up</Button>
       </div>
     </form>

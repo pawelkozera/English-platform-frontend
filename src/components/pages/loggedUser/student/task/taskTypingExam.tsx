@@ -72,12 +72,12 @@ export function TaskTypingExam({ words, questionType, onComplete, onMarkAsDone, 
 
       switch (questionType) {
         case "translation":
-        case "image":
-        case "audio":
-        case "retyping":
           correct = userInput === word.translation.toLowerCase().trim();
           break;
         case "reverseTranslation":
+        case "image":
+        case "audio":
+        case "retyping":
           correct = userInput === word.word.toLowerCase().trim();
           break;
       }

@@ -59,12 +59,12 @@ export function TaskTyping({ words, questionType, onComplete, isPreview = false 
 
     switch (questionType) {
       case "translation":
-      case "image":
-      case "audio":
-      case "retyping":
         correct = userInput.toLowerCase().trim() === currentWord.translation.toLowerCase().trim()
         break
       case "reverseTranslation":
+      case "image":
+      case "audio":
+      case "retyping":
         correct = userInput.toLowerCase().trim() === currentWord.word.toLowerCase().trim()
         break
     }
@@ -104,7 +104,6 @@ export function TaskTyping({ words, questionType, onComplete, isPreview = false 
           </div>
         )
       case "reverseTranslation":
-      case "retyping":
         return (
           <div>
             <img
@@ -113,6 +112,17 @@ export function TaskTyping({ words, questionType, onComplete, isPreview = false 
               className="w-48 h-48 object-cover mb-4"
             />
             <p className="text-2xl font-semibold mb-4">{currentWord.translation}</p>
+          </div>
+        )
+      case "retyping":
+        return (
+          <div>
+            <img
+              src={baseURL + "/" + currentWord.imageFilePath || "/placeholder.svg?height=200&width=200"}
+              alt="Word representation"
+              className="w-48 h-48 object-cover mb-4"
+            />
+            <p className="text-2xl font-semibold mb-4">{currentWord.word}</p>
           </div>
         )
       case "image":
