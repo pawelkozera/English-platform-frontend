@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { CreateGroup } from '../group/createGroup';
+import { CreateGroup } from '../createGroup';
 import { UserProvider } from '@/components/utils/UserContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { vi, describe, expect, it } from 'vitest';
