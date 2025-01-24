@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { GroupManagement } from "../groupManagement";
 import { useUser } from "@/components/utils/UserContext";
@@ -57,3 +57,5 @@ describe("GroupManagement", () => {
     expect(screen.getByText("Manage Tests")).toBeEnabled();
   });	
 });
+
+

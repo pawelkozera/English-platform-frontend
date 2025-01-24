@@ -230,7 +230,7 @@ export function TaskConnection({ words, questionType, onComplete, isPreview = fa
                 style={{ backgroundColor: getBlockColor(index, true) }}
                 onClick={() => handleBlockClick(index, true)}
               >
-                {word.translation}
+                {word.word}
               </div>
             ))
           )}

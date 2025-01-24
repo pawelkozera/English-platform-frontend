@@ -4,8 +4,8 @@ import { Word, TypingType } from '@/lib/types';
 import { describe, it, expect, vi } from "vitest";
 
 const words: Word[] = [
-  {id: 1, word: 'dog', translation: 'perro', imageFilePath: '', audioFilePath: '' },
-  {id: 2, word: 'cat', translation: 'gato', imageFilePath: '', audioFilePath: '' },
+  {id: 1, word: 'dog', translation: 'pies', imageFilePath: '', audioFilePath: '' },
+  {id: 2, word: 'cat', translation: 'kot', imageFilePath: '', audioFilePath: '' },
 ];
 
 const defaultProps = {
@@ -30,9 +30,9 @@ describe('TaskTypingExam', () => {
   
     const inputField = screen.getAllByPlaceholderText("Type your answer here")[0];
   
-    fireEvent.change(inputField, { target: { value: 'perro' } });
+    fireEvent.change(inputField, { target: { value: 'pies' } });
   
-    expect(inputField).toHaveValue('perro');
+    expect(inputField).toHaveValue('pies');
   });
   
 	it('renders the correct question type', () => {
@@ -75,7 +75,7 @@ describe('TaskTypingExam', () => {
 	
 		const inputField = screen.getAllByPlaceholderText("Type your answer here")[0];
 	
-		fireEvent.change(inputField, { target: { value: 'perro' } });
+		fireEvent.change(inputField, { target: { value: 'pies' } });
 	
 		expect(onMarkAsDoneMock).toHaveBeenCalledTimes(1);
 	});	

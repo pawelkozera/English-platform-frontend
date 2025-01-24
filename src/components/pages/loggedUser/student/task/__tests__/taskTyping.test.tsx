@@ -87,12 +87,10 @@ describe("TaskTyping Component", () => {
     const submitButton = screen.getByRole("button", { name: "Submit" })
     const nextButton = screen.getByRole("button", { name: "Next" })
 
-    // Answer first word correctly
     fireEvent.change(input, { target: { value: "kot" } })
     fireEvent.click(submitButton)
     await waitFor(() => fireEvent.click(nextButton))
 
-    // Answer second word correctly
     fireEvent.change(input, { target: { value: "pies" } })
     fireEvent.click(submitButton)
     await waitFor(() => fireEvent.click(nextButton))

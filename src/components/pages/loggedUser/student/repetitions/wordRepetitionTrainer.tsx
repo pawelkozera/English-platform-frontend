@@ -149,21 +149,21 @@ export function WordRepetitionTrainer() {
 
   const showHint = () => {
     if (userAnswer.length === 0 && currentWord) {
-      setUserAnswer(currentWord.translation[0]);
+      setUserAnswer(currentWord.word[0]);
       return;
-    } else if (userAnswer === currentWord?.translation) {
+    } else if (userAnswer === currentWord?.word) {
       return;
     }
 
     for (let i = 0; i < userAnswer.length; i++) {
-      if (userAnswer[i] !== currentWord!.translation[i]) {
-        setUserAnswer(currentWord!.translation.slice(0, i + 1));
+      if (userAnswer[i] !== currentWord!.word[i]) {
+        setUserAnswer(currentWord!.word.slice(0, i + 1));
         return;
       }
     }
 
     setUserAnswer(
-      userAnswer + currentWord!.translation.slice(userAnswer.length, userAnswer.length + 1)
+      userAnswer + currentWord!.word.slice(userAnswer.length, userAnswer.length + 1)
     );
   };
 
@@ -246,7 +246,7 @@ export function WordRepetitionTrainer() {
               />
             )}
 
-            <h2 className="text-2xl font-bold mb-4">{currentWord.word}</h2>
+            <h2 className="text-2xl font-bold mb-4">{currentWord.translation}</h2>
 
             <audio controls className="mt-2">
               <source
@@ -267,7 +267,7 @@ export function WordRepetitionTrainer() {
             {showAnswer && (
               <div className="mb-4">
                 <p className="font-semibold">Correct answer:</p>
-                <p>{highlightMistakes(currentWord.translation, userAnswer)}</p>
+                <p>{highlightMistakes(currentWord.word, userAnswer)}</p>
               </div>
             )}
             {!showRatingButtons ? (

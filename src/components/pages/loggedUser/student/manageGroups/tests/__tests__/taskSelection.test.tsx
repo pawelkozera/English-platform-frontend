@@ -45,7 +45,6 @@ describe('TaskSelection Component', () => {
       />
     );
 
-    // Check if task descriptions are rendered
     expect(screen.getByText('Task 1')).toBeInTheDocument();
     expect(screen.getByText('Task 2')).toBeInTheDocument();
   });
@@ -60,11 +59,9 @@ describe('TaskSelection Component', () => {
       />
     );
 
-    // Check the button text for selected task
     const buttonTask1 = screen.getByText('Selected');
     expect(buttonTask1).toBeInTheDocument();
 
-    // Check the button text for unselected task
     const buttonTask2 = screen.getByText('Select');
     expect(buttonTask2).toBeInTheDocument();
   });
@@ -79,16 +76,12 @@ describe('TaskSelection Component', () => {
       />
     );
 
-    // Click on the task button for task 1
     fireEvent.click(screen.getByText('Selected'));
 
-    // Ensure the mock function is called to deselect the task
     expect(mockOnTaskSelection).toHaveBeenCalledWith(1);
 
-    // Click on the task button for task 2
     fireEvent.click(screen.getByText('Select'));
 
-    // Ensure the mock function is called to select the task
     expect(mockOnTaskSelection).toHaveBeenCalledWith(2);
   });
 
@@ -126,7 +119,6 @@ describe('TaskSelection Component', () => {
 					</Router>
 				);
 
-    // Check if TaskTypingExam or TaskConnection is rendered for each task
     expect(screen.getByText('word3')).toBeInTheDocument();
   });
 
@@ -147,7 +139,6 @@ describe('TaskSelection Component', () => {
 			</Router>
 		);
 
-    // Check if TaskTyping or TaskConnection is rendered for each task
     expect(screen.getByText('word1')).toBeInTheDocument();
   });
 });

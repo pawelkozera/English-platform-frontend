@@ -175,16 +175,16 @@ export function TestsTask({ tasks, timeDuration }: TestsTaskProps) {
     let score = 0;
     userAnswersArray.forEach((userAnswer, index) => {
       switch (task.taskSubTypeName) {
-        case "translation":
+        case "reverseTranslation":
         case "image":
         case "audio":
         case "retyping":
-          if (userAnswer === task.words[index].translation.toLowerCase().trim()) {
+          if (userAnswer === task.words[index].word.toLowerCase().trim()) {
             score += task.score / task.words.length
           }
           break;
-        case "reverseTranslation":
-          if (userAnswer === task.words[index].word.toLowerCase().trim()) {
+        case "translation":
+          if (userAnswer === task.words[index].translation.toLowerCase().trim()) {
             score += task.score / task.words.length
           }
           break;

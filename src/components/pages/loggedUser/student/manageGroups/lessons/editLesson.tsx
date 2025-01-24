@@ -115,7 +115,7 @@ export function EditLesson() {
         onPageChange={setLessonPage}
       />
 
-      <p className="mt-8">Select the groups to which you want to add the lesson</p>
+      <p className="mt-8">Select the groups</p>
       <GroupSelector
         groups={groups}
         selectedGroups={groups.filter((group) =>

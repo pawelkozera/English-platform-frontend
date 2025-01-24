@@ -78,9 +78,9 @@ export function TaskTyping({ words, questionType, onComplete, isPreview = false 
       setCompletedWords((prev) => [...prev, words.indexOf(currentWord)])
     }
 
-    if (availableWords.length - 1 === 0 && !isPreview && onComplete) {
+    if (availableWords.length - 1 === 0 && !isPreview && onComplete && isCorrect) {
       onComplete()
-    } else {
+    } else if (availableWords.length > 0) {
       setCurrentWordIndex((prevIndex) => (prevIndex + 1) % availableWords.length)
     }
 
@@ -161,6 +161,23 @@ export function TaskTyping({ words, questionType, onComplete, isPreview = false 
         <></>
       ) : availableWords.length > 0 ? (
         <form onSubmit={handleSubmit} className="space-y-6">
+          {(() => {
+            switch (questionType) {
+              case "retyping":
+                return <p>Retype</p>;
+              case "image":
+                return <p>What's in this image?</p>;
+              case "audio":
+                return <p>What do you hear?</p>;
+              case "translation":
+                return <p>Translate this word</p>;
+              case "reverseTranslation":
+                return <p>What's the original word for:</p>;
+              default:
+                return <p>Unknown question type</p>;
+            }
+          })()}
+
           <div className="flex flex-col items-center">
             {renderQuestion()}
             {currentWord?.id && (

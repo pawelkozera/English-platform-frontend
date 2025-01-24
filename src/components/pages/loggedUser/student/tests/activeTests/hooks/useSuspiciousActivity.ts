@@ -145,7 +145,7 @@ export function useSuspiciousActivity({ testInstanceId, countScore, idleTimeout 
       }
     };
 
-    const interval = setInterval(checkIdleTimeout, 1000);
+    const interval = setInterval(checkIdleTimeout, 10000);
     return () => clearInterval(interval);
   }, [idleTimeout, testInstanceId]);
 

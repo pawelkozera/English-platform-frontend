@@ -11,7 +11,6 @@ describe('LessonSelector', () => {
 
     render(<LessonSelector lessons={lessons} selectedLesson={[]} onLessonChange={vi.fn()} />);
 
-    // Check if lessons are rendered
     expect(screen.getByText('Lesson 1')).toBeInTheDocument();
     expect(screen.getByText('Lesson 2')).toBeInTheDocument();
   });
@@ -29,8 +28,7 @@ describe('LessonSelector', () => {
 				onLessonChange={vi.fn()}
 			/>
 		);
-	
-		// Check if 'Lesson 1' has the selected border
+
 		const lesson1Card = screen.getByText('Lesson 1').closest('.cursor-pointer');
 		expect(lesson1Card).toHaveClass('border-primary');
 		const lesson2Card = screen.getByText('Lesson 2').closest('.cursor-pointer');
